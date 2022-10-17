@@ -4,7 +4,7 @@ This repository contains regularly updated course materials. You can use lecture
 
 # Lecture slides
 
-* Lecture 1 - 
+* Lecture 1 - https://github.com/SergeiSa/Fundumentals-of-robotics-2022/tree/main/Slides/Introduction
 
 # Lecture videos (2022 offering)
 
