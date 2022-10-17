@@ -1,0 +1,351 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+
+\title{Introduction, 2D linkages}
+\subtitle{Fundamentals of Robotics, Lecture 1}
+\author{by Sergei Savin}
+\centering
+\date{\mydate}
+
+
+
+\begin{document}
+\maketitle
+
+
+\begin{frame}{Content}
+
+%\begin{itemize}
+%\item Motivation
+%\item Ordinary differential equations
+%    \begin{itemize}
+%    \item 1st order
+%    \item n-th order
+%    \end{itemize}
+%\item Linear differential equations
+%    \begin{itemize}
+%    \item 1st order
+%    \item n-th order
+%    \end{itemize}
+%\item Changing n-th order ODE to a State-Space form
+%\item State-Space to ODE
+%\item Read more
+%\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{What is Robotics?}
+% \framesubtitle{O}
+\begin{flushleft}
+
+Since you chose to study Robotics, you likely have thought about what the word refers to. There are famous attempts to define it:
+
+\begin{itemize}
+	 \item Combination of mechanics, electronics, sensors and software.
+	 \item Study of machines that make decisions based on acquired data (as opposed to automation of repetitive processes).
+	 \item Science of making robots, which include industrial arms, quadrotors, automatic vacuum cleaners and walking robots - but does not include washing machines, airplanes and rockets. Are autonomous cars included?
+\end{itemize}
+
+I propose that we use the term when we find it practically useful: if it helps to describe something as a robot, as part of Robotics, as "doing Robotics" - do it; if there is better terminology - use the better one instead.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{What is this course about?}
+% \framesubtitle{Part 1}
+\begin{flushleft}
+
+There are aspects of "core" robotics that are so universally required that it is safe to assume you will need it. That includes understanding kinematics and dynamics of serial linkages (such as industrial arms) or single rigid bodies (such as drones, underwater robots, cars, delivery robots) and their combination (walking robots, mobile manipulators). 
+
+\bigskip
+
+This course is here to give you the prerequisite knowledge expected of a robotics graduate.
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{What is this course about?}
+	% \framesubtitle{Part 1}
+	\begin{flushleft}
+		
+		More concretely, we need to have a very good understanding of:
+		
+		\bigskip
+		
+		\begin{itemize}
+			\item Forward kinematics
+			\item Frame transformations
+			\item Jacobians, null spaces, Relations between forces and joint torques, between Cartesian and joint velocities
+			\item Inverse kinematics
+			\item Dynamics
+			\item Trajectory planning
+			\item ...and more
+		\end{itemize}
+		
+		Most of those are directly useful for mobile and industrial robotics, but frame transformation is also used in computer vision, while trajectory planning is at the core of autonomous vehicles, rockets, airplanes, etc.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Terminology}
+%\framesubtitle{1st order}
+\begin{flushleft}
+
+Let us remember some terminology from classical mechanics.
+
+\bigskip
+
+A \emph{point mass} is an object characterized by its position $\bo{r} \in \R^3$, velocity $\bo{v} \in \R^3$ and mass $m \in \R$.
+
+\bigskip
+
+\begin{example}
+	If you model a satellite in orbit, you would likely describe it through its position and velocity which determine its orbit, and its mass that influences how much acceleration external forces (or thrusters) can produce.
+\end{example}
+
+\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Terminology}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		
+		A \emph{rigid body} is an object characterized by its position $\bo{r} \in \R^3$ and orientation $\bo{T} \in SO(3)$, velocity of its center of mass $\bo{v} \in \R^3$ and angular velocity $\omega \in \R^3$, its mass $m$ and moment of inertia $\bo{I} \in \R^{3 \times 3}$.
+		
+		\bigskip
+		
+		\begin{example}
+			If you model a drone, it is better to describe not just its position, but also its orientation - to know where it can and cannot fly next, to know where the camera is facing, etc. It is good to know not only mass but also moment of inertia, to understand how quickly it can turn.
+		\end{example}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Joints}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		A \emph{joint} is a constraint placed on a rigid body, restricting its movements. The joint type we will focus on is pin joint - think of it as a door hinge, or as a motor; it allows the body to rotate around the joint's axis, but nothing else:
+		
+	
+		% TODO: \usepackage{graphicx} required
+		\begin{figure}
+			\centering
+			\includegraphics[width=0.7\linewidth]{PinJoints}
+			\caption{Pin (revolute) joint - pictorial representation}
+			\label{fig:pinjoints}
+		\end{figure}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Joints}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Other joint types include:
+		
+		\begin{itemize}
+			\item Prismatic (allows to slide back and forth, think of your drawer);
+			\item Spherical (kinda like your shoulder joint, allows any rotation, no translation)
+			\item Universal (allows two rotations)
+			\item Helical (skrew-like)
+			\item ...and others
+		\end{itemize}
+
+		Industrial robots and walking robot mostly use revolute joints.	Big exception are orthogonal robots (like what you see in 3D printers), which use what we can describe as prismatic joints.
+		
+		Everything that we will study in this course can be applied to all types of joints will small modifications; with that in mind we focus on pin joints.	
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Links}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		
+		A rigid body attached to something (e.g. - to the ground) via a joint is called a \emph{link}. A link attached via a pin joint is characterized by its orientation $q \in \R$ and angular velocity $v \in \R$, its mass $m$ and moment of inertia $\bo{I} \in \R^{3 \times 3}$.
+		
+		\bigskip
+		
+		\begin{example}
+			A pendulum can be described by its angle, angular velocity, its mass and moment of inertia.
+		\end{example}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{One link robot}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Let us consider a pendulum, described with angle $\varphi$ between its link and the vertical line. The length of the pendulum is given as $l$, point $\bo{r}_K$ is located at end of the pendulum.
+		
+		\bigskip
+		
+		\begin{columns}
+			\begin{column}{0.5\textwidth}
+				\input{fig_onelink}
+			\end{column}
+			\begin{column}{0.5\textwidth}  %%<--- here
+				
+				Position of $\bo{r}_K$ is given as:
+				
+				\begin{equation}
+					\bo{r}_K = \begin{bmatrix}
+						l \sin (\varphi) \\ 
+						l \cos (\varphi) 
+					\end{bmatrix}
+				\end{equation}
+				
+				Differentiating the position we can find its velocity:
+				
+				\begin{equation}
+					\dot{\bo{r}}_K = \begin{bmatrix}
+						l \dot \varphi \cos (\varphi) \\ 
+						-l \dot \varphi \sin (\varphi) 
+					\end{bmatrix}
+				\end{equation}
+				
+				
+			\end{column}
+		\end{columns}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Two link robot}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+	
+		\begin{columns}
+			\begin{column}{0.4\textwidth}
+				\input{fig_twolink}
+			\end{column}
+			\begin{column}{0.6\textwidth}  %%<--- here
+				
+					Let us consider a double-pendulum, described with angles $q_1$, $q_2$, with joints $O_1$, $O_2$ and \emph{end effector} $\bo{r}_K$, defined as before. The position of $K$ is given as:
+				
+					
+					\begin{equation*}
+						\bo{r}_K = \begin{bmatrix}
+							l_1 \sin (q_1) + l_2 \sin (q_1+q_2) \\ 
+							l_1 \cos (q_1) + l_2 \cos (q_1+q_2) 
+						\end{bmatrix}
+					\end{equation*}
+				
+			\end{column}
+		\end{columns}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Two link robot}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Velocity of the end effector is found by differentiation:
+		
+				\begin{equation}
+					\dot{\bo{r}}_K = 
+					\begin{bmatrix}
+						l_1 \dot q_1\cos (q_1) + l_2 (\dot q_1+\dot q_2) \cos (q_1+q_2) \\ 
+					  - l_1 \dot q_1\sin (q_1)  - l_2 (\dot q_1+\dot q_2) \sin (q_1+q_2) 
+					\end{bmatrix}
+				\end{equation}
+		
+		If we introduce different variables $\varphi_1 = q_1$ and $\varphi_2 = q_1 + q_2$, the position and velocity of the end effector will take a simpler form:
+		
+		\begin{equation}
+			\bo{r}_K = \begin{bmatrix}
+				l_1 \sin (\varphi_1) + l_2 \sin (\varphi_2) \\ 
+				l_1 \cos (\varphi_1) + l_2 \cos (\varphi_2) 
+			\end{bmatrix}
+		\end{equation}
+		
+		\begin{equation}
+			\dot{\bo{r}}_K = 
+			\begin{bmatrix}
+				l_1 \dot \varphi_1\cos (\varphi_1) + l_2 \dot \varphi_2 \cos (\varphi_2) \\ 
+			  - l_1 \dot \varphi_1\sin (\varphi_1)  - l_2 \dot \varphi_2 \sin (\varphi_2) 
+			\end{bmatrix}
+		\end{equation}
+		
+		\emph{The form of the kinematics depends on the choice of coordinates}. In this example $q_1$, $q_2$ are relative (joint) angles, and $\varphi_1$, $\varphi_2$ are absolute orientation.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Angular velocity}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Angular velocity of a rigid body is the rate of change of its orientation. In the last example, the orientation of the first link is given as $q_1$ and orientation of the second body - as $q_1 + q_2$. The rate of change of the orientation is found by differentiating these quantities:
+		
+		\begin{equation}
+			\omega_1 = \dot q_1
+		\end{equation}
+		\begin{equation}
+			\omega_2 = \dot q_1 + \dot q_2  
+		\end{equation}
+		
+		This is so simple because we have an explicit expression defining orientation of the body; we will see next lecture that it is more difficult in 3D.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Thank you!}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\mygit}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\bigskip
+
+\centerline{\textcolor{black}{\qrcode[height=1.6in]{https://github.com/SergeiSa/Control-Theory-Slides-Spring-2022}}}
+
+\end{frame}
+
+\end{document}
