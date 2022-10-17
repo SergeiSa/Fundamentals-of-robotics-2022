@@ -15,26 +15,18 @@
 \maketitle
 
 
-\begin{frame}{Content}
-
-%\begin{itemize}
-%\item Motivation
-%\item Ordinary differential equations
-%    \begin{itemize}
-%    \item 1st order
-%    \item n-th order
-%    \end{itemize}
-%\item Linear differential equations
-%    \begin{itemize}
-%    \item 1st order
-%    \item n-th order
-%    \end{itemize}
-%\item Changing n-th order ODE to a State-Space form
-%\item State-Space to ODE
-%\item Read more
-%\end{itemize}
-
-\end{frame}
+%\begin{frame}{Content}
+%
+%%\begin{itemize}
+%%\item Motivation
+%%\item Ordinary differential equations
+%%\item Linear differential equations
+%%\item Changing n-th order ODE to a State-Space form
+%%\item State-Space to ODE
+%%\item Read more
+%%\end{itemize}
+%
+%\end{frame}
 
 
 
@@ -165,16 +157,29 @@ A \emph{point mass} is an object characterized by its position $\bo{r} \in \R^3$
 	\begin{flushleft}
 		
 		Other joint types include:
-		
-		\begin{itemize}
-			\item Prismatic (allows to slide back and forth, think of your drawer);
-			\item Spherical (kinda like your shoulder joint, allows any rotation, no translation)
-			\item Universal (allows two rotations)
-			\item Helical (skrew-like)
-			\item ...and others
-		\end{itemize}
 
+		% TODO: \usepackage{graphicx} required
+		\begin{figure}
+			\centering
+			\includegraphics[width=0.7\linewidth]{"Other joints"}
+			\caption{Joints: (a), (b) - revolute, (c) - prizmatic, (d) - universal, (e) - spherical}
+			\label{fig:other-joints}
+		\end{figure}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Joints}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
 		Industrial robots and walking robot mostly use revolute joints.	Big exception are orthogonal robots (like what you see in 3D printers), which use what we can describe as prismatic joints.
+		
+		\bigskip
 		
 		Everything that we will study in this course can be applied to all types of joints will small modifications; with that in mind we focus on pin joints.	
 		
@@ -221,7 +226,7 @@ A \emph{point mass} is an object characterized by its position $\bo{r} \in \R^3$
 				\begin{equation}
 					\bo{r}_K = \begin{bmatrix}
 						l \sin (\varphi) \\ 
-						l \cos (\varphi) 
+						-l \cos (\varphi) 
 					\end{bmatrix}
 				\end{equation}
 				
@@ -229,8 +234,8 @@ A \emph{point mass} is an object characterized by its position $\bo{r} \in \R^3$
 				
 				\begin{equation}
 					\dot{\bo{r}}_K = \begin{bmatrix}
-						l \dot \varphi \cos (\varphi) \\ 
-						-l \dot \varphi \sin (\varphi) 
+						 l \dot \varphi \cos (\varphi) \\ 
+						 l \dot \varphi \sin (\varphi) 
 					\end{bmatrix}
 				\end{equation}
 				
@@ -242,6 +247,33 @@ A \emph{point mass} is an object characterized by its position $\bo{r} \in \R^3$
 	\end{flushleft}
 \end{frame}
 
+
+
+\begin{frame}{One link robot}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		The forward kinematics can also be solved via rotation matrices:
+		
+		\begin{equation}
+			\bo{r}_K = 
+			\ma{\cos(\varphi)}{-\sin (\varphi)}{\sin (\varphi)}{\cos(\varphi)}
+			\begin{bmatrix}
+				0 \\ 
+				-l 
+			\end{bmatrix}
+		=
+			\begin{bmatrix}
+				l \sin (\varphi) \\ 
+				-l \cos (\varphi) 
+			\end{bmatrix}
+		\end{equation}
+		
+		
+		
+		
+	\end{flushleft}
+\end{frame}
 
 
 
@@ -311,6 +343,51 @@ A \emph{point mass} is an object characterized by its position $\bo{r} \in \R^3$
 	\end{flushleft}
 \end{frame}
 
+
+
+\begin{frame}{Two link robot}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		The forward kinematics can also be solved via rotation matrices:
+		
+		$$
+			\bo{r}_K = 
+			\ma{\cos(q_1)}{-\sin (q_1)}{\sin (q_1)}{\cos(q_1)}
+			\begin{bmatrix}
+				0 \\ 
+				-l_1 
+			\end{bmatrix}
+		+$$
+		$$+
+		\ma{\cos(q_1+q_2)}{-\sin (q_1+q_2)}{\sin (q_1+q_2)}{\cos(q_1+q_2)}
+		\begin{bmatrix}
+			0 \\ 
+			-l_2 
+		\end{bmatrix}
+			=$$
+			$$
+			=
+			\begin{bmatrix}
+				l_1 \dot q_1\cos (q_1) + l_2 (\dot q_1+\dot q_2) \cos (q_1+q_2) \\ 
+				- l_1 \dot q_1\sin (q_1)  - l_2 (\dot q_1+\dot q_2) \sin (q_1+q_2) 
+			\end{bmatrix}
+		$$
+		
+		where:
+		
+		$$ \ma{\cos(q_1+q_2)}{-\sin (q_1+q_2)}{\sin (q_1+q_2)}{\cos(q_1+q_2)}  =$$
+		$$=
+		\ma{\cos(q_1)}{-\sin (q_1)}{\sin (q_1)}{\cos(q_1)}
+		\ma{\cos(q_2)}{-\sin (q_2)}{\sin (q_2)}{\cos(q_2)}
+		$$ 
+		
+		
+		
+		
+		
+	\end{flushleft}
+\end{frame}
 
 
 
