@@ -1,0 +1,354 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+
+\title{3D linkages}
+\subtitle{Fundamentals of Robotics, Lecture 2}
+\author{by Sergei Savin}
+\centering
+\date{\mydate}
+
+
+
+\begin{document}
+\maketitle
+
+
+%\begin{frame}{Content}
+%
+%%\begin{itemize}
+%%\item Motivation
+%%\item Ordinary differential equations
+%%\item Linear differential equations
+%%\item Changing n-th order ODE to a State-Space form
+%%\item State-Space to ODE
+%%\item Read more
+%%\end{itemize}
+%
+%\end{frame}
+
+
+
+\begin{frame}{Basis}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		
+		Three linearly independent vectors $\bo{v}_1$, $\bo{v}_2$ and $\bo{v}_3$ in $\R^3$ form a \emph{basis} $\mathcal V$ - which means any vector in $\R^3$ can be represented as a linear combination of $\bo{v}_1$, $\bo{v}_2$ and $\bo{v}_3$.
+		
+		\bigskip
+		
+		If  $||\bo{v}_i|| = 1$ and  $\bo{v}_1 \cdot \bo{v}_2 = 0$, $\bo{v}_2 \cdot \bo{v}_3 = 0$, $\bo{v}_3 \cdot \bo{v}_1 = 0$, then the basis is called orthonormal.
+		
+		\bigskip
+		
+		If $\bo{V} = [\bo{v}_1 \ \bo{v}_2 \ \bo{v}_3]$ is an orthonormal basis, then:
+		
+		\begin{equation}
+			\bo{V}\T \bo{V} = \bo{I} 
+		\end{equation}
+	
+		Given a vector $\bo{r}$ we can find its coordinates in terms of  $ \bo{V}$ as:
+		
+		\begin{equation}
+			^\mathcal{V} \bo{r} =\bo{V}\T \bo{r}
+		\end{equation}		
+	
+		Note the abuse of notation: we talk interchangeably of about the basis $\mathcal V$ and matrix whose columns are the elements of the basis $\mathbf V$.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{World}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		
+		Consider a basis $\mathcal{V}$ defined via matrix $\bo{V} = [\bo{v}_1 \ \bo{v}_2 \ \bo{v}_3]$. If vectors $\bo{v}_i$ are actually given by their coordinates, we can consider these vectors as being expressed in a \emph{world} basis $\mathcal{W}$.
+		
+		\bigskip
+		
+		Given a vector $\bo{r}$, we can express it in terms of basis $\mathcal{V}$, denoting it with a left upper-script:  $^\mathcal{V} \bo{r}$. But we can also express it in the world basis as $^\mathcal{W} \bo{r}$. Relation between  $^\mathcal{V} \bo{r}$ and  $^\mathcal{W} \bo{r}$ is given as:
+		
+		\begin{equation}
+			 ^\mathcal{V} \bo{r} = \bo{V}\T  \ ^\mathcal{W} \bo{r} 
+		\end{equation}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Frame}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		An orthonormal basis $\bo{V} = [\bo{v}_1 \ \bo{v}_2 \ \bo{v}_3]$ and an origin point $ \bo{r}$ together form a frame $\mathcal{F}$. Usually we assume that $\bo{v}_3 = \bo{v}_1 \times \bo{v}_2$, $\bo{v}_1 = \bo{v}_2 \times \bo{v}_3$ and $\bo{v}_2 = \bo{v}_3 \times \bo{v}_1$.
+		
+		\bigskip
+		
+		Given a point $\bo{p}$ we can find its coordinates in the frame $\mathcal{F}$:
+		
+		\begin{equation}
+			^\mathcal{F} \bo{p} =\bo{V}\T (\bo{p} - \bo{r})
+		\end{equation}
+	
+		\bigskip
+	
+		A few notes:
+		
+		\begin{itemize}
+			\item Vectors are usually expressed in terms of bases, points are usually expressed in terms of frames.
+			
+			\item Any point can be associated with a vector with the same coordinates, which can be expressed in a basis.
+		\end{itemize}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Geometry of a link}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		
+		Consider a rigid body. We mark three points on that body: $C$, $B$ and $F$: center of mass, base and follower. We also define a basis $\mathcal{B}$ stationary with respect to the body $\mathcal{B} = [\bo{b}_x, \ \bo{b}_y, \ \bo{b}_z]$ and coordinates of these points in $\mathcal{B}$: $\bo{r}_C$, $\bo{r}_B$ and $\bo{r}_F$.
+		
+		\bigskip
+		
+		Considering vectors $\bo{b}_x$, $\bo{b}_y$ and $\bo{b}_z$ as expressed in terms of some default basis $\bo{I}$, we can find coordinates 
+		
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{One link robot}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Let us consider a pendulum, described with angle $\varphi$ between its link and the vertical line. The length of the pendulum is given as $l$, point $\bo{r}_K$ is located at end of the pendulum.
+		
+		\bigskip
+		
+		\begin{columns}
+			\begin{column}{0.5\textwidth}
+				\input{fig_onelink}
+			\end{column}
+			\begin{column}{0.5\textwidth}  %%<--- here
+				
+				Position of $\bo{r}_K$ is given as:
+				
+				\begin{equation}
+					\bo{r}_K = \begin{bmatrix}
+						l \sin (\varphi) \\ 
+						-l \cos (\varphi) 
+					\end{bmatrix}
+				\end{equation}
+				
+				Differentiating the position we can find its velocity:
+				
+				\begin{equation}
+					\dot{\bo{r}}_K = \begin{bmatrix}
+						 l \dot \varphi \cos (\varphi) \\ 
+						 l \dot \varphi \sin (\varphi) 
+					\end{bmatrix}
+				\end{equation}
+				
+				
+			\end{column}
+		\end{columns}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{One link robot}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		The forward kinematics can also be solved via rotation matrices:
+		
+		\begin{equation}
+			\bo{r}_K = 
+			\ma{\cos(\varphi)}{-\sin (\varphi)}{\sin (\varphi)}{\cos(\varphi)}
+			\begin{bmatrix}
+				0 \\ 
+				-l 
+			\end{bmatrix}
+		=
+			\begin{bmatrix}
+				l \sin (\varphi) \\ 
+				-l \cos (\varphi) 
+			\end{bmatrix}
+		\end{equation}
+		
+		
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Two link robot}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+	
+		\begin{columns}
+			\begin{column}{0.4\textwidth}
+				\input{fig_twolink}
+			\end{column}
+			\begin{column}{0.6\textwidth}  %%<--- here
+				
+					Let us consider a double-pendulum, described with angles $q_1$, $q_2$, with joints $O_1$, $O_2$ and \emph{end effector} $\bo{r}_K$, defined as before. The position of $K$ is given as:
+				
+					
+					\begin{equation*}
+						\bo{r}_K = \begin{bmatrix}
+							l_1 \sin (q_1) + l_2 \sin (q_1+q_2) \\ 
+							l_1 \cos (q_1) + l_2 \cos (q_1+q_2) 
+						\end{bmatrix}
+					\end{equation*}
+				
+			\end{column}
+		\end{columns}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Two link robot}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Velocity of the end effector is found by differentiation:
+		
+				\begin{equation}
+					\dot{\bo{r}}_K = 
+					\begin{bmatrix}
+						l_1 \dot q_1\cos (q_1) + l_2 (\dot q_1+\dot q_2) \cos (q_1+q_2) \\ 
+					  - l_1 \dot q_1\sin (q_1)  - l_2 (\dot q_1+\dot q_2) \sin (q_1+q_2) 
+					\end{bmatrix}
+				\end{equation}
+		
+		If we introduce different variables $\varphi_1 = q_1$ and $\varphi_2 = q_1 + q_2$, the position and velocity of the end effector will take a simpler form:
+		
+		\begin{equation}
+			\bo{r}_K = \begin{bmatrix}
+				l_1 \sin (\varphi_1) + l_2 \sin (\varphi_2) \\ 
+				l_1 \cos (\varphi_1) + l_2 \cos (\varphi_2) 
+			\end{bmatrix}
+		\end{equation}
+		
+		\begin{equation}
+			\dot{\bo{r}}_K = 
+			\begin{bmatrix}
+				l_1 \dot \varphi_1\cos (\varphi_1) + l_2 \dot \varphi_2 \cos (\varphi_2) \\ 
+			  - l_1 \dot \varphi_1\sin (\varphi_1)  - l_2 \dot \varphi_2 \sin (\varphi_2) 
+			\end{bmatrix}
+		\end{equation}
+		
+		\emph{The form of the kinematics depends on the choice of coordinates}. In this example $q_1$, $q_2$ are relative (joint) angles, and $\varphi_1$, $\varphi_2$ are absolute orientation.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Two link robot}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		The forward kinematics can also be solved via rotation matrices:
+		
+		$$
+			\bo{r}_K = 
+			\ma{\cos(q_1)}{-\sin (q_1)}{\sin (q_1)}{\cos(q_1)}
+			\begin{bmatrix}
+				0 \\ 
+				-l_1 
+			\end{bmatrix}
+		+$$
+		$$+
+		\ma{\cos(q_1+q_2)}{-\sin (q_1+q_2)}{\sin (q_1+q_2)}{\cos(q_1+q_2)}
+		\begin{bmatrix}
+			0 \\ 
+			-l_2 
+		\end{bmatrix}
+			=$$
+			$$
+			=
+			\begin{bmatrix}
+				l_1 \dot q_1\cos (q_1) + l_2 (\dot q_1+\dot q_2) \cos (q_1+q_2) \\ 
+				- l_1 \dot q_1\sin (q_1)  - l_2 (\dot q_1+\dot q_2) \sin (q_1+q_2) 
+			\end{bmatrix}
+		$$
+		
+		where:
+		
+		$$ \ma{\cos(q_1+q_2)}{-\sin (q_1+q_2)}{\sin (q_1+q_2)}{\cos(q_1+q_2)}  =$$
+		$$=
+		\ma{\cos(q_1)}{-\sin (q_1)}{\sin (q_1)}{\cos(q_1)}
+		\ma{\cos(q_2)}{-\sin (q_2)}{\sin (q_2)}{\cos(q_2)}
+		$$ 
+		
+		
+		
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Angular velocity}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Angular velocity of a rigid body is the rate of change of its orientation. In the last example, the orientation of the first link is given as $q_1$ and orientation of the second body - as $q_1 + q_2$. The rate of change of the orientation is found by differentiating these quantities:
+		
+		\begin{equation}
+			\omega_1 = \dot q_1
+		\end{equation}
+		\begin{equation}
+			\omega_2 = \dot q_1 + \dot q_2  
+		\end{equation}
+		
+		This is so simple because we have an explicit expression defining orientation of the body; we will see next lecture that it is more difficult in 3D.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Thank you!}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\mygit}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\bigskip
+
+\centerline{\textcolor{black}{\qrcode[height=1.6in]{https://github.com/SergeiSa/Fundumentals-of-robotics-2022}}}
+
+\end{frame}
+
+\end{document}

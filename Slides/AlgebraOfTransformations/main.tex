@@ -1,0 +1,622 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+
+\title{Linear Transformations}
+\subtitle{Fundamentals of Robotics, Lecture 2}
+\author{by Sergei Savin}
+\centering
+\date{\mydate}
+
+
+
+\begin{document}
+\maketitle
+
+
+%\begin{frame}{Content}
+%
+%%\begin{itemize}
+%%\item Motivation
+%%\item Ordinary differential equations
+%%\item Linear differential equations
+%%\item Changing n-th order ODE to a State-Space form
+%%\item State-Space to ODE
+%%\item Read more
+%%\end{itemize}
+%
+%\end{frame}
+
+
+\begin{frame}{Abstract vectors and change of bases}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		The goal of this lecture is to help you perform change of basis correctly and easily. To do it we will try to think in terms of \emph{abstract vectors} rather than vector \emph{coordinates}. 
+		
+		
+		\bigskip
+		
+		The motivation is simple. If you have to perform a transformation while thinking about a vector in terms of its coordinates, you have to keep in mind three entities: vector, the basis in which it is expressed, giving you the coordinates, and the transformation. Giving up on coordinates simplifies it to only two entities.
+		
+		
+	\end{flushleft}
+\end{frame}
+
+\begin{frame}{Abstract vectors and change of bases}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		First, a small exercise in abstract thinking and linear algebra.
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Vectors}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Consider a vector $\bo{a} \in \mathscr{L}$, where $\mathscr{L}$ is a linear space. 
+		
+		
+		\bigskip
+		
+		We are very used to think about the vector space $\R^n$ where vectors are essentially columns of numbers. But you are also familiar with vectors as arrows. For today's lecture, let us think about vectors as arrows, or purely abstract objects.
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Coordinates and vectors}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Consider vectors $\bo{v}_1$, $\bo{v}_2$, ..., $\bo{v}_n \in \mathscr{L}$. If $\bo{a} \in \text{span}(\bo{v}_1, \ ...., \ \bo{v}_n)$, it means there are coordinates $\alpha_1$, $\alpha_2$, ..., $\alpha_n \in \R$ that allow us to express $\bo{a}$ in terms of vectors $\bo{v}_i$:
+		
+		\begin{equation}
+			\bo{a} = \alpha_1 \bo{v}_1 + \alpha_2 \bo{v}_2 + ... + \alpha_n \bo{v}_n 
+		\end{equation}
+		
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Coordinates and operators}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		We can define linear operations that map vectors from $\mathscr{L}$ to itself. For example, let $\mathcal{M}$ be such operation: $\mathcal{M}: \mathscr{L} \rightarrow \mathscr{L}$.
+		
+		\bigskip
+		
+		Remember that $\mathcal{M}$ is linear:
+		
+		\begin{equation}
+			\mathcal{M}(\beta_1 \bo{w}_1 + \beta_2 \bo{w}_2) = 
+			\beta_1\mathcal{M}(\bo{w}_1) + 
+			\beta_2\mathcal{M}(\bo{w}_2)
+		\end{equation}
+	%
+	where $\bo{w}_1, \bo{w}_2 \in \mathscr{L}$ and $\beta_1, \beta_2 \in \R$.
+		
+		\bigskip
+		
+		This is useful, because for our vector $\bo{a} = \alpha_1 \bo{v}_1 + ... + \alpha_n \bo{v}_n$ the operator $\mathcal{M}$ then works as follows:
+		
+		\begin{equation}
+	\mathcal{M}(\bo{a}) = 
+	\alpha_1 \mathcal{M}(\bo{v}_1) + ... + \alpha_n \mathcal{M}(\bo{v}_n)
+\end{equation}		
+		
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Coordinates and operators}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Why is the fact
+		$
+			\mathcal{M}(\bo{a}) = 
+			\alpha_1 \mathcal{M}(\bo{v}_1) + ... + \alpha_n \mathcal{M}(\bo{v}_n)
+		$ 
+		useful? Because instead of thinking about what $\mathcal{M}$ does to any possible $\bo{a} \in \mathscr{L}$, we think about what it does to $n$ particular vectors - $\bo{v}_1$, ... $\bo{v}_n$.
+		
+		\bigskip
+		
+		Let us define $\bo{u}_1 = \mathcal{M}(\bo{v}_1)$, ..., $\bo{u}_n = \mathcal{M}(\bo{v}_n)$.
+		
+		\bigskip
+			
+		If $\bo{v}_1$, ... $\bo{v}_n$ form a basis in $\mathscr{L}$, then all vectors $\bo{u}_i$ can also be represented as linear combinations of $\bo{v}_1$, ... $\bo{v}_n$. For example:
+		%
+		\begin{align*}
+			\bo{u}_1 = m_{11} \bo{v}_1 + m_{21}  \bo{v}_2 + ... + m_{n1} \bo{v}_n \\
+			\bo{u}_2 = m_{12} \bo{v}_1 + m_{22}  \bo{v}_2 + ... + m_{2n} \bo{v}_n \\
+			 ... \\
+			 \bo{u}_n = m_{1n} \bo{v}_1 + m_{2n}  \bo{v}_2 + ... + m_{nn} \bo{v}_n
+		\end{align*}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Coordinates and operators}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Let us define $\bo{b} = \mathcal{M}(\bo{a})$; since $\bo{v}_1$, ... $\bo{v}_n$ form a basis in $\mathscr{L}$, we can represent $\bo{b}$ as:
+		
+		\begin{equation}
+			\bo{b} = \beta_1 \bo{v}_1 + \beta_2 \bo{v}_2 + ... + \beta_n \bo{v}_n 
+		\end{equation}		
+	
+		How can we find coordinates $\beta_1$, $\beta_2$, ..., $\beta_n$ if we know $\alpha_1$, $\alpha_2$, ..., $\alpha_n$?
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Coordinates and operators}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		\begin{align*}
+			\mathcal{M}(\bo{a}) = 
+			\alpha_1 \mathcal{M}(\bo{v}_1) + ... + \alpha_n \mathcal{M}(\bo{v}_n) 
+			= \\
+			\alpha_1 (m_{11} \bo{v}_1 + m_{21}  \bo{v}_2 + ... + m_{n1} \bo{v}_n) 
+			+ ... + \\
+			\alpha_n (m_{1n} \bo{v}_1 + m_{2n}  \bo{v}_2 + ... + m_{nn} \bo{v}_n)
+			= \\
+			(\alpha_1 m_{11} + ... + \alpha_n m_{1n}) \bo{v}_1 
+			+ ... + 
+			(\alpha_1 m_{n1} + ... + \alpha_n m_{nn}) \bo{v}_n 
+			= \\
+			 \beta_1 \bo{v}_1 + ... + \beta_n \bo{v}_n
+		\end{align*}		
+%
+which is to say:
+
+		\begin{align*}
+	\beta_1 = \alpha_1 m_{11} + ... + \alpha_n m_{1n} \\
+	\beta_2 = \alpha_1 m_{21} + ... + \alpha_n m_{2n} \\
+	... \\
+	\beta_n = \alpha_1 m_{n1} + ... + \alpha_n m_{nn}
+		\end{align*}		
+
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Coordinates and matrices}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		But this:
+		%
+		\begin{align*}
+			\beta_1 = \alpha_1 m_{11} + ... + \alpha_n m_{1n} \\
+			\beta_2 = \alpha_1 m_{21} + ... + \alpha_n m_{2n} \\
+			... \\
+			\beta_n = \alpha_1 m_{n1} + ... + \alpha_n m_{nn}
+		\end{align*}		
+	%
+	is the same as matrix multiplication:
+	
+		\begin{equation}
+			\begin{bmatrix}
+				\beta_1 \\ \beta_2 \\ ...\\ \beta_n
+			\end{bmatrix}
+		=
+			\begin{bmatrix}
+				m_{11} & m_{12} & ... & m_{1n} \\
+				m_{21} & m_{22} & ... & m_{2n} \\
+				... & ... & ... & ... \\
+				m_{n1} & m_{n2} & ... & m_{nn} 
+			\end{bmatrix}
+			\begin{bmatrix}
+				\alpha_1 \\ \alpha_2 \\ ...\\ \alpha_n
+			\end{bmatrix}
+		\end{equation}
+		
+		This matrix completely describes what the operator $\mathcal{M}$ does, using a specific basis.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Coordinates and matrices}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		What did we learn?
+		
+		\begin{itemize}
+			\item Vectors and operators exist independent of coordinate representation.
+			\item Coordinates are associates with bases.
+			\item Coordinates describe both vectors and operators.
+		\end{itemize}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Change of bases}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Now assume that aside from basis $\bo{v}_1$, ... $\bo{v}_n$, we also have a basis $\bo{w}_1$, ... $\bo{w}_n$. If we know coordinates of $\bo{a}$ in $\bo{v}_1$, ... $\bo{v}_n$, can we find its coordinates in $\bo{w}_1$, ... $\bo{w}_n$?
+		
+		\begin{equation}
+			\bo{a} = \gamma_1 \bo{w}_1 + \gamma_2 \bo{w}_2 + ... + \gamma_n \bo{w}_n 
+		\end{equation}		
+	
+		First, we need coordinates of vectors $\bo{w}_i$ in our old basis:
+		%
+		\begin{align*}
+			\bo{w}_1 = c_{11} \bo{v}_1 + c_{21}  \bo{v}_2 + ... + c_{n1} \bo{v}_n \\
+			\bo{w}_2 = c_{12} \bo{v}_1 + c_{22}  \bo{v}_2 + ... + c_{2n} \bo{v}_n \\
+			... \\
+			\bo{w}_n = c_{1n} \bo{v}_1 + c_{2n}  \bo{v}_2 + ... + c_{nn} \bo{v}_n
+		\end{align*}
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Change of bases}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Then, from $\bo{a} = \gamma_1 \bo{w}_1 + \gamma_2 \bo{w}_2 + ... + \gamma_n \bo{w}_n$ we get:
+		%
+			\begin{align*}
+		\bo{a} = 
+			 \gamma_1 (c_{11} \bo{v}_1 + c_{21}  \bo{v}_2 + ... + c_{n1} \bo{v}_n) + ... + \\
+			 \gamma_n (c_{1n} \bo{v}_1 + c_{2n}  \bo{v}_2 + ... + c_{nn} \bo{v}_n)
+			= \\
+			( \gamma_1 c_{11} + ... + \gamma_n c_{1n}) \bo{v}_1 
+			+ ... + 
+			( \gamma_1 c_{n1} + ... + \gamma_n c_{nn}) \bo{v}_n 
+			= \\
+			\alpha_1 \bo{v}_1 + ... + \alpha_n \bo{v}_n
+		\end{align*}		
+		
+		\begin{equation}
+	\begin{bmatrix}
+		\alpha_1 \\ \alpha_2 \\ ...\\ \alpha_n
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		c_{11} & c_{12} & ... & c_{1n} \\
+		c_{21} & c_{22} & ... & c_{2n} \\
+		... & ... & ... & ... \\
+		c_{n1} & c_{n2} & ... & c_{nn} 
+	\end{bmatrix}
+	\begin{bmatrix}
+		\gamma_1 \\ \gamma_2 \\ ...\\ \gamma_n
+	\end{bmatrix}
+\end{equation}		
+		
+		We see that to find $\gamma_i$ we will need to invert the matrix, unlike in the previous example. However, that is only because vectors $\bo{w}_i$ were expressed in the basis $\bo{v}_1$, ... $\bo{v}_n$, and not the other way around.
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Coordinates and matrices}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Things to note here:
+		
+		\begin{itemize}
+			\item In Robotics we sometimes talk about "active" rotations (that rotate a vector, result is expressed in the same basis) and "passive" rotations (is just a change of basis). It can become intensely confusing if "active" operations are performed but the result is expressed in a different basis.
+			\item Our approach so far does not require this terminology and abstractions; it works with the most basic principles of linear algebra. Thus, it is useful for checking your results.
+		\end{itemize}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Vectors and operators in $\R^n$}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Now we will consider a specific linear space - $\R^n$. This will noticeably increase the risk of confusion:
+		
+		\bigskip
+		
+		\begin{itemize}
+			\item We cannot tell the difference between a vector in $\R^n$ and coordinates of a vector in $\R^n$.
+			
+			\item A basis in $\R^n$ is just a n-by-n matrix; same is true about an operator.
+		\end{itemize}
+		
+		Our aim now is to resist the temptation to treat coordinates and vectors as indistinct.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Orthonormal bases in $\R^n$}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Assume that columns of a matrix $\bo{V} = [\bo{v}_1, \ ... \ \bo{v}_n]$ form an orthonormal basis $\mathcal{V}$ in $\R^n$. Orthonormal means - all columns of $\bo{V}$ have norm 1, and they are all mutually orthogonal.
+		
+		\bigskip
+		
+		Consider a vector $\bo{a} = \alpha_1 \bo{v}_1 + ... + \alpha_n \bo{v}_n$. We can find coordinates $\alpha_i$ as follows:
+		
+		\begin{equation}
+			\alpha_i = \bo{v}_i \cdot \bo{a}
+		\end{equation}
+		%
+		which is true because $\bo{v}_i \cdot \bo{v}_i = 1$ and for all $i \neq j$ $\bo{v}_i \cdot \bo{v}_j = 0$. If the basis was not orthonormal, but we could find dot products, we could still compute coordinates - figure out how!
+	
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Orthonormal bases in $\R^n$}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Knowing that $\alpha_i = \bo{v}_i \cdot \bo{a}$ we can find coordinates in one matrix multiplication:
+		
+		\begin{equation}
+			\begin{bmatrix}
+				\alpha_1 \\ \alpha_2 \\ ... \\ \alpha_n
+			\end{bmatrix}
+		=
+			\begin{bmatrix}
+				\bo{v}_1 & \bo{v}_2 & ... & \bo{v}_n
+			\end{bmatrix}\T
+		\bo{a}
+		=
+		\bo{V}\T \bo{a}
+		\end{equation}
+		
+		\bigskip
+		
+		In general, if $\bo{r} \in \R^n$ is a vector,  $\bo{B}$ is a basis and $\bo{p} \in \R^n$ are coordinates of $\bo{r}$ in $\bo{B}$, then the following relations hold:
+		
+		\begin{equation}
+			\bo{r} = \bo{B}\bo{p}
+		\end{equation}
+		\begin{equation}
+			\bo{p} = \bo{B}\T \bo{r}
+		\end{equation}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Orthonormal bases in $\R^n$}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Any matrix $\bo{B}$ whose columns form an orthonormal basis in $\R^n$ is called an orthonormal matrix. Such matrices have properties:
+		
+		\begin{equation}
+			\bo{B}^{-1} = \bo{B}\T
+		\end{equation}
+		\begin{equation}
+			\bo{B}\T\bo{B} = \bo{I}
+		\end{equation}		
+	
+		These follow directly from the definition of orthonormal matrices. It can also be used to directly prove the results on the previous slide.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Change of bases}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Let $\bo{r}$ be expressed in the orthonormal basis $\mathcal{A}$ formed by columns of $\bo{A}$, with coordinate vector $^\mathcal{A}\bo{r}$. Let us find coordinates of $\bo{r}$ in  the orthonormal basis $\mathcal{B}$ formed by columns of $\bo{B}$.
+		
+		\bigskip
+		
+		As long as we know $\bo{r}$, the solution is trivial: $^\mathcal{B}\bo{r} = \bo{B}\T \bo{r}$. If $\bo{r}$ is not known, then we can first find it:
+		
+		\begin{align}
+			\bo{r} = \bo{A} \ ^\mathcal{A}\bo{r} \\
+			^\mathcal{B}\bo{r} = \bo{B}\T \bo{A} \ ^\mathcal{A}\bo{r}
+		\end{align}
+		
+		We could memorize that in this scenario the relation between coordinates is given by matrix multiplication $ \bo{B}\T \bo{A}$, but it is better to just understand the process.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Change of bases}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+	 Let us look at the expression below one more time:
+		%
+		\begin{align}
+			\bo{r} = \bo{A} \ ^\mathcal{A}\bo{r} \\
+			^\mathcal{B}\bo{r} = \bo{B}\T \bo{A} \ ^\mathcal{A}\bo{r}
+		\end{align}
+		
+		In writing kinematics equations, you will feel great uneasiness about vectors like $\bo{r}$, which have no indicators as to in which basis they are expressed. But remember - $\bo{r}$ is not a stack of coordinates, it is an element of the vector space $\mathscr{L}$. The vector space just happens to be $\R^n$, which leads us to desire to think only of coordinates, not abstract vectors. If you insist of thinking about $\bo{r}$ as coordinates - its basis is identity matrix. That is also the basis in which columns of both $\bo{A}$ and $\bo{B}$ are expressed. 
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Complicated example}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Let $\bo{r}$ be expressed in the orthonormal basis $\mathcal{A}$ formed by columns of $\bo{A}$. We know that columns of $\bo{A}$ expressed in the orthonormal basis $\mathcal{C}$ are given as $^\mathcal{C} \bo{A}$. The basis $\mathcal{C}$ is formed by the columns of matrix $\bo{C}$. We know that columns of $\bo{C}$ expressed in the orthonormal basis $\mathcal{W}$ are given as $^\mathcal{W} \bo{C}$.
+		
+		\bigskip
+		
+		Given basis $\mathcal{B}$ formed by the columns of matrix $\bo{B}$, expressed in the orthonormal basis $\mathcal{W}$ as $^\mathcal{W} \bo{B}$, find transformation $\bo{T}$ that maps coordinates of $\bo{r}$ in $\mathcal{A}$ to coordinates of $\bo{r}$ in $\mathcal{B}$.
+		
+		\bigskip
+		
+		Sounds like a nightmare, doesn't it?
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Complicated example}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		First, we find coordinates of $\bo{r}$ in $\mathcal{A}$:
+		%
+		\begin{equation}
+			^\mathcal{A} \bo{r} = \bo{A}\T \bo{r}
+		\end{equation}
+	%
+		But we do not know $\bo{A}$, we only know $^\mathcal{C} \bo{A}$. Well, this knowing the coordinates of the columns, finding the columns themselves is easy:
+		%
+		\begin{equation}
+			\bo{A} =\bo{C} \ \ ^\mathcal{C} \bo{A} 
+		\end{equation}		
+	%
+		Same is true for $\bo{C}$ - we do not know it, but we have the coordinates:
+		%
+		\begin{align}
+			\bo{C} =\bo{W} \ \ ^\mathcal{W} \bo{C} \\
+			\bo{A} =\bo{W} \ \ ^\mathcal{W} \bo{C} \ \ ^\mathcal{C} \bo{A} \\
+			^\mathcal{A} \bo{r} = (\bo{W} \ \ ^\mathcal{W} \bo{C} \ \ ^\mathcal{C} \bo{A})\T \bo{r} \\
+			^\mathcal{A} \bo{r} =^\mathcal{C}\bo{A}\T \  ^\mathcal{W} \bo{C}\T \bo{W}\T  \bo{r} 
+		\end{align}				
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Complicated example}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Next, we find coordinates of $\bo{r}$ in $\mathcal{B}$:
+		%
+		\begin{equation}
+			^\mathcal{B} \bo{r} = \bo{B}\T \bo{r}
+		\end{equation}
+		%
+		As before, we do not know $\bo{B}$, we only know $^\mathcal{W} \bo{B}$:
+		%
+		\begin{align}
+			\bo{B} =\bo{W} \ \ ^\mathcal{W} \bo{B}  \\
+			^\mathcal{B} \bo{r} = (\bo{W} \ \ ^\mathcal{W} \bo{B})\T \bo{r} \\
+			^\mathcal{B} \bo{r} = ^\mathcal{W} \bo{B}\T \bo{W}\T \bo{r}
+		\end{align}		
+					
+		Now, what is the relation between $^\mathcal{A} \bo{r} =^\mathcal{C}\bo{A}\T \  ^\mathcal{W} \bo{C}\T \bo{W}\T  \bo{r} $ and $^\mathcal{B} \bo{r} = ^\mathcal{W} \bo{B}\T \bo{W}\T \bo{r}$?
+		%
+		\begin{align}
+			^\mathcal{W} \bo{C} \ \ ^\mathcal{C}\bo{A} \ \ ^\mathcal{A} \bo{r} = \bo{W}\T  \bo{r} \\
+			^\mathcal{W} \bo{B} \ \ ^\mathcal{B} \bo{r} =  \bo{W}\T \bo{r} \\
+			^\mathcal{W} \bo{C} \ \ ^\mathcal{C}\bo{A} \ \ ^\mathcal{A} \bo{r} = 
+			^\mathcal{W} \bo{B} \ \ ^\mathcal{B} \bo{r}
+		\end{align}				
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Complicated example}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		From the last expression:
+		%
+		\begin{equation}
+			^\mathcal{W} \bo{C} \ \ ^\mathcal{C}\bo{A} \ \ ^\mathcal{A} \bo{r} = 
+			^\mathcal{W} \bo{B} \ \ ^\mathcal{B} \bo{r}
+		\end{equation}
+		
+		...we get the solution:
+		
+		\begin{align}			
+			^\mathcal{B} \bo{r} = ^\mathcal{W} \bo{B}\T  \ ^\mathcal{W} \bo{C} \ \ ^\mathcal{C}\bo{A} \ \ ^\mathcal{A} \bo{r} \\
+			\bo{T} = ^\mathcal{W} \bo{B}\T  \ ^\mathcal{W} \bo{C} \ \ ^\mathcal{C}\bo{A}
+		\end{align}
+				
+				Notice that the process is simple, requiring no geometric intuition.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Final advice}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Remember that applied Robotics is not a sprint: there are no bonus point for solving a change of basis problem faster. Instead, the goal is to be precise, to verify your results. 
+		
+		\bigskip
+		
+		Do not shy away from methods that require you to fill a page with intermediate derivations if they are clear and lead to correct answers.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Thank you!}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\mygit}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\bigskip
+
+\centerline{\textcolor{black}{\qrcode[height=1.6in]{https://github.com/SergeiSa/Fundumentals-of-robotics-2022}}}
+
+\end{frame}
+
+\end{document}
