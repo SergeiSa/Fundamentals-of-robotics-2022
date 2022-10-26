@@ -4,13 +4,15 @@ This repository contains regularly updated course materials. You can use lecture
 
 # Lecture slides
 
-* Lecture 1 - https://github.com/SergeiSa/Fundumentals-of-robotics-2022/tree/main/Slides/Introduction
+* Lecture 1 (Introduction, 2D serial linkages) - https://github.com/SergeiSa/Fundumentals-of-robotics-2022/tree/main/Slides/Introduction
+* Lecture 2 (Change of bases) - https://github.com/SergeiSa/Fundumentals-of-robotics-2022/tree/main/Slides/AlgebraOfTransformations
 
 # Lecture videos (2022 offering)
 
 ([playlist](https://))
 
-* Lecture 1 (description) - link
+* Lecture 1 (Introduction, 2D serial linkages) - https://youtu.be/F_HEuaqM5yA
+* Lecture 2 (Change of bases) - https://youtu.be/xSFuJYf9Z20
 
 
 # For contributors
