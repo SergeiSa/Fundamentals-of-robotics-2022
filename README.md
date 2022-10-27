@@ -14,6 +14,9 @@ This repository contains regularly updated course materials. You can use lecture
 * Lecture 1 (Introduction, 2D serial linkages) - https://youtu.be/F_HEuaqM5yA
 * Lecture 2 (Change of bases) - https://youtu.be/xSFuJYf9Z20
 
+# Assignments
+
+* Homework 1 (URDF and ROS) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Assignments/Homework_1
 
 # For contributors
 
