@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="gui" default="true" />
+    <arg name="file" default="" /> 
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find urdf_model)/urdf/$(arg file)'"/>
+
+    <param name="use_gui" value="$(arg gui)"/>
+    
+    
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" name="joint_state_publisher_gui" output="screen" if="$(arg gui)" />
+    
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find urdf_model)/config/rviz.rviz" required="true" />
+    
+</launch>

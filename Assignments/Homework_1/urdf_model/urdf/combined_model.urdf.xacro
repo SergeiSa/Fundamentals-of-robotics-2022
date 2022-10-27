@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="full_model">
+
+    <xacro:macro name="combined_model">
+        <xacro:include filename="$(find urdf_model)/urdf/model.urdf.xacro"/>
+        <xacro:include filename="$(find urdf_model)/urdf/grip.urdf.xacro"/>
+
+
+        <xacro:rotating_base/>
+        <xacro:gripper/>
+        
+        <joint name="attachment" type="fixed">
+            <origin xyz="0.0 0.1 0.125" rpy="0.0 0.0 0.0"/>
+            <parent link="inter_1"/>
+            <child link="base"/>    
+        </joint>
+    </xacro:macro>
+
+    <xacro:combined_model/>
+
+</robot>
