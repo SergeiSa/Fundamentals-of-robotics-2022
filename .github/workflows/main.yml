@@ -36,6 +36,12 @@ jobs:
           root_file: main.tex
           working_directory: Slides/AlgebraOfTransformations/
 
+      - name: Compile LaTeX document Linkages3D
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/Linkages3D/
+
 
 
 
@@ -57,6 +63,12 @@ jobs:
           name: AlgebraOfTransformations.pdf
           path: Slides/AlgebraOfTransformations/main.pdf
 
+      - name: Save Linkages3D artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Linkages3D.pdf
+          path: Slides/Linkages3D/main.pdf
+
 
 
 
@@ -69,6 +81,7 @@ jobs:
           git add Syllabus/main.pdf
           git add Slides/Introduction/main.pdf
           git add Slides/AlgebraOfTransformations/main.pdf
+          git add Slides/Linkages3D/main.pdf
 
 
 
