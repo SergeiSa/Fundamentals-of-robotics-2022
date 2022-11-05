@@ -10,10 +10,12 @@ This repository contains regularly updated course materials. You can use lecture
 
 # Lecture videos (2022 offering)
 
-([playlist](https://))
+([playlist](https://www.youtube.com/watch?v=F_HEuaqM5yA&list=PLlxR_sEKjSpS51VjnYjxYnLwdCxjzIKS6&ab_channel=SergeiS))
 
 * Lecture 1 (Introduction, 2D serial linkages) - https://youtu.be/F_HEuaqM5yA
 * Lecture 2 (Change of bases) - https://youtu.be/xSFuJYf9Z20
+* Lecture 3 (Frame transformation for serial linkages in 3D) - https://youtu.be/MTff24iTobg
+* Lecture 4 (Transformations, Jacobians, angular velocity) - https://youtu.be/Sqezz96pVMQ
 
 # Assignments
 
