@@ -1,0 +1,492 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+
+\title{Jacobians}
+\subtitle{Fundamentals of Robotics, Lecture 4}
+\author{by Sergei Savin}
+\centering
+\date{\mydate}
+
+
+
+\begin{document}
+\maketitle
+
+
+
+
+
+\begin{frame}{Forward kinematics with special Euclidean group}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Consider a two-link robot with frames $\mathcal F_i$, bases $\mathcal T_i$, joints and origins $O_i$. We know $^{\mathcal W}\mathbf T_1$ and $^{\mathcal T_1} \mathbf T_2$, as well as $^{\mathcal W}\bo{r}_{O_1}$ and $^{\mathcal T_1}\bo{r}_{O_1 O_2}$ (see last lecture for details).
+		
+		\bigskip
+		
+		To express everything in terms of the world frame we do the familiar steps:
+		
+		\begin{align}
+			^{\mathcal W}\mathbf T_2 = ^{\mathcal W}\mathbf T_1 \ ^{\mathcal T_1}\mathbf T_2 \\
+			^{\mathcal W}\bo{r}_{O_1 O_2} = ^{\mathcal W}\mathbf T_1 \ ^{\mathcal T_1}\bo{r}_{O_1 O_2} \\
+			^{\mathcal W}\bo{r}_{O_2} = ^{\mathcal W}\bo{r}_{O_1} +
+			 ^{\mathcal W}\bo{r}_{O_1 O_2}
+		\end{align}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Forward kinematics with special Euclidean group}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		We could do the same thing in the following fashion:
+		
+		\begin{equation}
+			^{\mathcal W}\bo{E}_1 = 
+			\begin{bmatrix}
+				^{\mathcal W}\mathbf T_1 & ^{\mathcal W}\bo{r}_{O_1} \\
+				\bo{0} & 1
+			\end{bmatrix},  
+		\ \ \ 
+			^{\mathcal E_1}\bo{E}_2 = 
+			\begin{bmatrix}
+				^{\mathcal T_1}\mathbf T_2 & ^{\mathcal T_1}\bo{r}_{O_1 O_2} \\
+				\bo{0} & 1
+			\end{bmatrix}
+		\end{equation}		
+		
+		\begin{equation}
+			^{\mathcal W}\bo{E}_2 = 
+			\begin{bmatrix}
+				^{\mathcal W}\mathbf T_2 & ^{\mathcal W}\bo{r}_{O_2} \\
+				\bo{0} & 1
+			\end{bmatrix}
+		\end{equation}
+		
+		\begin{equation}
+			^{\mathcal W}\bo{E}_2 = 
+			^{\mathcal W}\bo{E}_1 \ ^{\mathcal E_1}\bo{E}_2
+		\end{equation}
+		
+		\begin{align*}
+			^{\mathcal W}\bo{E}_2 = 
+			\begin{bmatrix}
+				^{\mathcal W}\mathbf T_1 & ^{\mathcal W}\bo{r}_{O_1} \\
+				\bo{0} & 1
+			\end{bmatrix} 
+			\begin{bmatrix}
+	^{\mathcal T_1}\mathbf T_2 & ^{\mathcal T_1}\bo{r}_{O_1 O_2} \\
+	\bo{0} & 1
+			\end{bmatrix}
+	= \\
+	=
+			\begin{bmatrix}
+		^{\mathcal W}\mathbf T_1 \ ^{\mathcal T_1}\mathbf T_2 & 
+		(^{\mathcal W}\mathbf T_1 \ ^{\mathcal T_1}\bo{r}_{O_1 O_2} + ^{\mathcal W}\bo{r}_{O_1})
+		\\
+		\bo{0} & 1
+			\end{bmatrix}
+		\end{align*}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Forward kinematics with special Euclidean group}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		In general, we can define a transformation from frame $i$ to the frame $i+1$ 
+		
+		\begin{equation}
+			^{\mathcal E_i}\bo{E}_{i+1} = 
+			\begin{bmatrix}
+				\bo{T}_i & \bo{p}_i \\
+				\bo{0} & 1
+			\end{bmatrix}
+		\end{equation}		
+	%
+	Where $\bo{T}_i$ are coordinates of the basis of the frame $i+1$ in terms of frame $i$, and $\bo{p}_i$ is the vector pointing from the origin of the  frame $i$ to the origin of the frame $i+1$ expressed in the basis of the frame $i$. 
+		
+		\bigskip
+		
+		To get transformation from the world frame to the $n$-th frame we get:
+		
+		
+		\begin{equation}
+			^{\mathcal W}\bo{E}_n = 
+			\prod_{i=1}^n \
+			^{\mathcal E_{i-1}}\bo{E}_i
+		\end{equation}		
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Forward kinematics and derivatives}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Last lecture we focused on how to find expressions of radius-vectors (vectors describing positions of points) in world frame, given relative positions and orientations of frames.
+		
+		\bigskip
+		
+		Today, we focus on derivatives of these expressions.
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Forward kinematics and derivatives}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Consider vector $\bo{r}_K$ describing position of the point $K$. What is its derivative?
+		
+		\bigskip
+		
+		In order to answer this question we need to understand, which parameters appearing in the expression for $\bo{r}_K$ are changing with time, and which do not.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Joint coordinates}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Consider an example:
+		
+		\begin{equation}
+			\bo{r}_K(\bo{q}) = 
+			\begin{bmatrix}
+				\cos q_1 & -\sin q_1 & 0 \\
+				\sin q_1 & \cos q_1 & 0 \\
+				0 & 0 & 1
+			\end{bmatrix}
+			\begin{bmatrix}
+				l_1 \\
+				0 \\
+				0
+			\end{bmatrix} = 
+				\begin{bmatrix}
+					l_1 \cos q_1 \\
+					l_1 \sin q_1 \\
+					0
+				\end{bmatrix}
+		\end{equation}
+		
+		In this example, we know that it is joint coordinate $q_1$ that is going to change with time.
+		
+		\bigskip
+		
+		Another example:
+		
+		\begin{equation*}
+			\bo{r}_K(\bo{q}) = 
+			\begin{bmatrix}
+				q_1 \\
+				q_2 \\
+				0
+			\end{bmatrix}
+		+
+			\begin{bmatrix}
+					1 & 0 & 0 \\
+					0 & \cos q_3 & -\sin q_3 \\
+					0 & \sin q_3 & \cos q_3 
+			\end{bmatrix}
+			\begin{bmatrix}
+				0 \\
+				l_1 \\
+				0
+			\end{bmatrix} = 
+			\begin{bmatrix}
+				q_1 \\
+				q_2 + l_1 \cos q_3 \\
+				l_1 \sin q_3
+			\end{bmatrix}
+		\end{equation*}
+		
+		Now, $q_1$ and $q_2$ are translations and  $q_3$ is a rotation, and $\bo{q} = [q_1, \ q_2, \ q_3]$ are changing joint coordinates.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Derivatives and jacobians}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		So, what is a derivative of $\bo{r}_K(\bo{q})$ with respect to time?  
+		
+		\begin{equation}
+			\frac{d}{dt} \bo{r}_K(\bo{q}) = 
+			\frac{\partial \bo{r}_K}{\partial \bo{q}} \dot{ \bo{q} }
+		\end{equation}
+	
+	We can denote $\bo{J}_K = \frac{\partial \bo{r}_K}{\partial \bo{q}} $ and call it a jacobian matrix. We can also denote velocity of the point $K$ as $\bo{v}_K(\bo{q}, \dot{ \bo{q} }) = \frac{d}{dt} \bo{r}_K(\bo{q})$.
+		
+		\begin{equation}
+	\bo{v}_K = 
+	\bo{J}_K \dot{ \bo{q} }
+		\end{equation}		
+	
+	\bigskip
+	
+	Notice that velocity $\bo{v}_K$ is linear with respect to the joint velocities $\dot{ \bo{q} }$, and the linear relation is given by the jacobian $\bo{J}_K$.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Jacobians of chains}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Consider $\bo{r}_K = \bo{r}_{OO_1} + \bo{r}_{O_1O_2} + ... + \bo{r}_{O_nK}$. What is a jacobian of $\bo{r}_K$?
+		
+		\begin{align*}
+	\bo{J}_K = 
+	\frac{\partial \bo{r}_K}{\partial \bo{q}} =
+	\frac{\partial \bo{r}_{OO_1}}{\partial \bo{q}} +
+	\frac{\partial \bo{r}_{O_1O_2}}{\partial \bo{q}} +
+	... +
+	\frac{\partial \bo{r}_{O_nK}}{\partial \bo{q}}	
+	= \\
+	=\bo{J}_{OO_1} + \bo{J}_{O_1O_2} + ... + \bo{J}_{O_nK}
+		\end{align*}		
+		
+		Jacobians have an additive structure inherited from the additive structure of the position vectors.
+		
+		\bigskip
+		
+		Notice also that if your vectors and jacobians are expressed via coordinates in different bases - you have to express them in a single basis, and then do the additions, as usual.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Angular velocity}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Let us consider a rigid body rotating with angular velocity $\omega$ with basis $\mathcal T$, given by a matrix $\bo{T}$ (whose coordinates in the world frame basis are $^{\mathcal W}\bo{T}$), stationary with respect to the rigid body. Consider a point $K$ on the link, defined by a vector $\bo{r}$. We know coordinates of $\bo{r}$ in terms of $\mathcal T$, which we denote as $^{\mathcal T} \bo{r}$.
+		
+		\bigskip
+		
+		What is velocity of $K$? By definition of angular velocity, $\bo{v} = \omega \times \bo{r}$. The same can be represented as a vector-matrix multiplication:
+		%
+		\begin{equation}
+			\bo{v} = \omega \times \bo{r} = \Omega \bo{r}
+		\end{equation}
+	%
+		\begin{equation}
+			\Omega = [\omega]_\times = 
+			\begin{bmatrix}
+				0 & -\omega_z & \omega_y \\
+				\omega_z & 0 & -\omega_x \\
+				-\omega_y & \omega_x & 0
+			\end{bmatrix}
+		\end{equation}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Angular velocity}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Note that expression  $\bo{v} = \omega \times \bo{r}$ works as long as we are talking about vectors themselves, or their coordinate representation in the same basis:
+		
+		\begin{align}
+			\bo{v} = \omega \times \bo{r} = \Omega \bo{r} \\
+			^{\mathcal W}\bo{v} = ^{\mathcal W}\omega \times \ ^{\mathcal W}\bo{r} = ^{\mathcal W}\Omega \ ^{\mathcal W}\bo{r}  \\
+			^{\mathcal T}\bo{v} = ^{\mathcal T}\omega \times \ ^{\mathcal T}\bo{r} = ^{\mathcal T}\Omega \ ^{\mathcal T}\bo{r} 
+		\end{align}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Angular velocity}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		At the same time, we can find position of $K$ as $\bo{r} =\bo{T} \ ^{\mathcal T} \bo{r}$ and $^{\mathcal W}\bo{r} =^{\mathcal W}\bo{T} \ ^{\mathcal T} \bo{r}$, where $\frac{d}{dt} ^{\mathcal T} \bo{r} = 0$. We can find its time derivative as:
+		
+		
+		\begin{align}
+			\bo{v} = \frac{d}{dt} \bo{r} = \frac{d}{dt} \bo{T} \ ^{\mathcal T} \bo{r} 
+			= \dot{ \bo{T} } \ ^{\mathcal T} \bo{r} \\
+				^{\mathcal W}\bo{v} = ^{\mathcal W}\dot{ \bo{T} } \ ^{\mathcal T} \bo{r}
+		\end{align}
+		
+		At the same time, $^{\mathcal W}\bo{v} =  ^{\mathcal W}\Omega \ ^{\mathcal W}\bo{r} $. Hence:
+		
+		\begin{equation}
+			^{\mathcal W}\bo{v} =  ^{\mathcal W}\Omega \ ^{\mathcal W}\bo{T} \ ^{\mathcal T} \bo{r}
+		\end{equation}		
+	
+		With that, we know that:
+		%
+		\begin{align}
+			\Omega \bo{T} = \dot{ \bo{T} } \\
+			\Omega = \dot{ \bo{T} } \bo{T}\T
+		\end{align}				
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Angular velocity}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		
+		Notice that $\bo{T}\T \bo{T} = \bo{I}$, so $ \frac{d}{dt} (\bo{T}\T \bo{T}) = 0$, and thus  $\dot{ \bo{T} }\T \bo{T} = -\bo{T}\T \dot{ \bo{T} } $:
+		
+		\begin{align}
+			\Omega = \dot{ \bo{T} } \bo{T}\T \\
+			\Omega \bo{T} = \dot{ \bo{T} } \\
+			\bo{T}\T \Omega \bo{T} = \bo{T}\T \dot{ \bo{T} } \\
+			\bo{T}\T \Omega \bo{T} = -\dot{ \bo{T} }\T \bo{T} \\
+			\bo{T}\T \Omega  = -\dot{ \bo{T} }\T \\
+			\Omega  = -\bo{T} \dot{ \bo{T} }\T 
+		\end{align}		
+	
+	Note, in these formulas $\Omega$, $\bo{T}$ and $\dot{ \bo{T} }$ are expressed in the same coordinates.
+	
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Angular velocity}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		
+		Given $\Omega$, we can find $\omega$:
+		
+		\begin{equation}
+			\omega =\text{skew2vec}(\Omega)
+		\end{equation}		
+	
+		\begin{equation}
+			\text{skew2vec} \left(
+			\begin{bmatrix}
+				0 & -\omega_z & \omega_y \\
+				\omega_z & 0 & -\omega_x \\
+				-\omega_y & \omega_x & 0
+			\end{bmatrix} 
+		\right)
+		=
+		\begin{bmatrix}
+			\omega_x \\ \omega_y \\ \omega_z
+		\end{bmatrix} 
+		\end{equation}		
+	
+	\bigskip
+		
+		You can notice that both $\omega$ and $\Omega$ are linear with respect to $\dot{ \bo{T} }$, which in turn is linear with respect to $\dot{\bo{q}}$.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Angular velocity jacobian}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		As we mentioned, $\omega = \omega(\bo{q}, \dot{\bo{q}})$ is linear with respect to $\dot{\bo{q}}$:
+		
+		\begin{equation}
+			\omega = \frac{\partial \omega}{\partial \dot{\bo{q}}} \dot{\bo{q}}
+			=
+			\bo{J}_\omega \dot{\bo{q}}
+		\end{equation}
+	
+	\bigskip
+	
+	Note that there are big differences in both computation and definition between translation jacobian $\bo{v}_K = 
+	\bo{J}_K \dot{ \bo{q} }$ and rotational jacobian $\bo{J}_\omega \dot{\bo{q}}$. 
+	
+	
+	\bigskip
+	
+	To define translation jacobian we need to define a link and a point on the link, whose jacobian we discuss; for rotation jacobian, we only need to identify the link whose rotation we describe.
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Jacobians and bases}
+	%\framesubtitle{1st order}
+	\begin{flushleft}
+		
+		Assume we have a vector $^{\mathcal W}\bo{r}(\bo{q})$ expressed in the basis $\mathcal W$. We can find its jacobian:
+		
+		\begin{equation}
+			^{\mathcal W}\bo{J}(\bo{q}) = \frac{\partial \ ^{\mathcal W}\bo{r}}{\partial \bo{q}}
+		\end{equation}
+		
+		Now, given basis $\mathcal T$, expressed by matrix $^{\mathcal W} \bo{T}$, we can represent $\bo{r}$ in $\mathcal T = const$:
+		
+		\begin{equation}
+	^{\mathcal T}\bo{r}(\bo{q}) = ^{\mathcal W} \bo{T}\T \ ^{\mathcal W}\bo{r}(\bo{q})
+		\end{equation}		
+	
+	And of course we can find jacobian of $^{\mathcal T}\bo{r}(\bo{q})$:
+	
+		\begin{equation}
+	^{\mathcal T}\bo{J}(\bo{q}) = \frac{\partial \ ^{\mathcal T}\bo{r}}{\partial \bo{q}}
+	=
+	^{\mathcal W} \bo{T}\T \ 
+	^{\mathcal W}\bo{J}(\bo{q})
+		\end{equation}	
+	
+	We can play the same game with angular velocities $\omega$. Jacobians depend on the bases same as vectors do.
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Thank you!}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\mygit}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\bigskip
+
+\centerline{\textcolor{black}{\qrcode[height=1.6in]{https://github.com/SergeiSa/Fundamentals-of-robotics-2022}}}
+
+\end{frame}
+
+\end{document}
