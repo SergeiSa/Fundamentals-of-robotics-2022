@@ -8,6 +8,8 @@ This repository contains regularly updated course materials. You can use lecture
 * Lecture 2 (Change of bases) - https://github.com/SergeiSa/Fundumentals-of-robotics-2022/tree/main/Slides/AlgebraOfTransformations
 * Lecture 3 (Serial linkages in 3D) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/Linkages3D
 * Lecture 4 (Jacobians) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/Jacobians
+* Lecture 5 (Fundamental subspaces) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/Subspaces
+* Lecture 6 (Inverse kinematics) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/InverseKinematics
 
 # Lecture videos (2022 offering)
 
