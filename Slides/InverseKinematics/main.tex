@@ -1,0 +1,404 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+
+\title{Inverse Kinematics}
+\subtitle{Fundamentals of Robotics, Lecture 6}
+\author{by Sergei Savin}
+\centering
+\date{\mydate}
+
+
+
+\begin{document}
+\maketitle
+
+
+
+
+
+\begin{frame}{Velocity problem}
+	\begin{flushleft}
+		
+		Given a point (e.g. end effector) $K$ with position given by vector $\bo{r}_K(\bo{q})$, we can find its velocity:
+		
+		\begin{equation}
+			\dot{\bo{r}}_K(\bo{q}) = \frac{\partial \bo{r}_K}{\partial  \bo{q}} \dot{\bo{q}}
+		\end{equation}
+		
+		Let us introduce notation:
+		
+		\begin{align}
+			\bo{J}_K = \frac{\partial \bo{r}_K}{\partial  \bo{q}} \\
+			\bo{v}_K = \dot{\bo{r}}_K(\bo{q})
+		\end{align}
+	
+		Thus we get:
+		
+		\begin{equation}
+			\bo{v}_K = \bo{J}_K \dot{\bo{q}}
+		\end{equation}		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Velocity problem}
+	\begin{flushleft}
+		
+		Given $\bo{v}_K = \bo{J}_K \dot{\bo{q}}$, can we find least-residual solution to this problem? Yes!
+		
+		\begin{equation}
+			\dot{\bo{q}}^* = \bo{J}_K^+ \bo{v}_K
+		\end{equation}		
+	
+		Is this the only solution? No. All solutions are:
+	
+		\begin{equation}
+			\dot{\bo{q}}^* = \bo{J}_K^+ \bo{v}_K + \bo{N} \bo{z}
+		\end{equation}			
+	%
+	where $ \bo{N} = \text{null}(\bo{J}_K)$ and $\bo{z}$ are null space coordinates.
+	
+	Alternatively, we can use a projector to do the same thing with less new notation:
+	
+		\begin{equation}
+			\dot{\bo{q}}^*= \bo{J}_K^+ \bo{v}_K + (\bo{I} - \bo{J}_K^+ \bo{J}_K)  \dot{\bo{q}}
+		\end{equation}		
+	
+	where $\bo{I} - \bo{J}_K^+ \bo{J}_K$ is a null space projector.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Optimal velocity problem}
+	\begin{flushleft}
+		
+		Now let us find closest joint velocity to $\dot{\bo{q}}_0$ that solves the velocity problem $\bo{v}_K = \bo{J}_K \dot{\bo{q}}$:
+		
+\begin{equation}
+	\begin{aligned}
+		& \underset{\dot{\bo{q}}}{\text{minimize}}
+		& & || \dot{\bo{q}} - \dot{\bo{q}}_0 ||, \\
+		& \text{subject to}
+		& & \bo{v}_K = \bo{J}_K \dot{\bo{q}}
+	\end{aligned}
+\end{equation}
+		
+		We can solve it by first finding all solutions:
+		
+		\begin{equation}
+			\dot{\bo{q}} = \bo{J}_K^+ \bo{v}_K + \bo{N} \bo{z}
+		\end{equation}			
+	
+	Then we minimize cost function in terms of the null space variable $\bo{z}$:
+	
+		\begin{equation}
+			|| \bo{J}_K^+ \bo{v}_K + \bo{N} \bo{z} - \dot{\bo{q}}_0 || \rightarrow min
+		\end{equation}	
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Optimal velocity problem}
+	\begin{flushleft}
+		
+		First we simplify $|| \bo{J}_K^+ \bo{v}_K + \bo{N} \bo{z} - \dot{\bo{q}}_0 || \rightarrow min$ with notation
+		
+		\begin{equation}
+			\bo{c} = \bo{J}_K^+ \bo{v}_K -  \dot{\bo{q}}_0
+		\end{equation}			
+		
+		Then we square $|| \bo{N} \bo{z} + \bo{c} ||$, and consider its derivative:
+		%
+		\begin{align}
+			(\bo{N} \bo{z} + \bo{c})\T (\bo{N} \bo{z} + \bo{c}) \rightarrow min \\
+			\frac{\partial }{\partial \bo{z}} (\bo{N} \bo{z} + \bo{c})\T (\bo{N} \bo{z} + \bo{c}) = 0 \\
+			2 \bo{z}\T \bo{N}\T \bo{N} + 2 \bo{c}\T \bo{N} = 0 \\
+			\bo{z} = -( \bo{N}\T \bo{N})^{-1} \bo{N}\T \bo{c}
+		\end{align}	
+	
+		Knowing that $\dot{\bo{q}} = \bo{J}_K^+ \bo{v}_K + \bo{N} \bo{z}$ we get:
+	
+		\begin{align}
+			\dot{\bo{q}} = \bo{J}_K^+ \bo{v}_K - \bo{N}  ( \bo{N}\T \bo{N})^{-1} \bo{N}\T \bo{c}
+		\end{align}		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Optimal velocity problem}
+	\begin{flushleft}
+		
+		Let us examine  the solution we obtained:
+		%
+		\begin{align}
+			\dot{\bo{q}} =  \bo{J}_K^+ \bo{v}_K - \bo{N}  ( \bo{N}\T \bo{N})^{-1} \bo{N}\T (\bo{J}_K^+ \bo{v}_K -  \dot{\bo{q}}_0) 
+			\\
+			\dot{\bo{q}} = (\bo{I} - \bo{N}  ( \bo{N}\T \bo{N})^{-1} \bo{N}\T)\bo{J}_K^+ \bo{v}_K +  
+			\bo{N}  ( \bo{N}\T \bo{N})^{-1} \bo{N}\T\dot{\bo{q}}_0
+		\end{align}				
+	
+		Let us examine the matrices:
+		%
+		\begin{align}
+			\bo{P}_N = \bo{N}  ( \bo{N}\T \bo{N})^{-1} \bo{N}\T
+		\\
+			\bo{P}_R = \bo{I} - \bo{N}  ( \bo{N}\T \bo{N})^{-1} \bo{N}\T =  \bo{I} - \bo{P}_N \\
+			\dot{\bo{q}} =\bo{P}_R \bo{J}_K^+ \bo{v}_K +  
+			\bo{P}_N \dot{\bo{q}}_0
+		\end{align}	
+
+		where $\bo{P}_N$ is column space projector for $\bo{N}$, hence it is a null space projector for the jacobian $\bo{J}_K$. And $ \bo{I} - \bo{P}_N$ is a projector to the orthogonal compliment, hence it is row space projector.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Optimal velocity problem}
+	\begin{flushleft}
+		
+		So, we have eq. $\dot{\bo{q}} =\bo{P}_R \bo{J}_K^+ \bo{v}_K +  
+		\bo{P}_N \dot{\bo{q}}_0$ and we have null space projector $\bo{P}_N$ and row space projector $\bo{P}_R$.
+		
+		\bigskip
+		
+		We know that pseudoinverse lies in the column space, so:
+		
+		\begin{equation}
+			 \bo{P}_R \bo{J}_K^+ = \bo{J}_K^+
+		\end{equation}
+	
+		Also we know that null space projector can be found as $\bo{P}_N = \bo{I} - \bo{J}_K^+\bo{J}_K$:
+		
+		\begin{equation}
+			\dot{\bo{q}} =\bo{J}_K^+ \bo{v}_K +  
+			(\bo{I} - \bo{J}_K^+\bo{J}_K) \dot{\bo{q}}_0
+		\end{equation}		
+	
+		Notice, this is almost exactly the same as what we found before. We can interpret it as "the solution is given by row-space least squares solution, plus null space projection of $\dot{\bo{q}}_0$".
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Acceleration problem}
+	\begin{flushleft}
+		
+		Consider second derivative of the position of the point $K$:
+		
+\begin{equation}
+	\ddot{\bo{r}}_K(\bo{q}) = \frac{\partial \bo{r}_K}{\partial  \bo{q}} \ddot{\bo{q}} 
+	+ 
+	\frac{d}{dt} \left( \frac{\partial \bo{r}_K}{\partial  \bo{q}} \right) \dot{\bo{q}}
+\end{equation}		
+		
+		Defining $\bo{a}_K = \ddot{\bo{r}}_K$ we get:
+		
+\begin{equation}
+	\bo{a}_K = \bo{J}_K \ddot{\bo{q}} 
+	+ 
+	\dot{\bo{J}}_K \dot{\bo{q}}
+\end{equation}	
+
+		The least residual solution is easily found:
+		
+\begin{equation}
+	\ddot{\bo{q}}  = \bo{J}_K^+
+	(\bo{a}_K - \dot{\bo{J}}_K \dot{\bo{q}})
+\end{equation}						
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Acceleration problem}
+	\begin{flushleft}
+		
+		Given $\bo{a}_K = \bo{J}_K \ddot{\bo{q}} + \dot{\bo{J}}_K \dot{\bo{q}}$ let us find acceleration closest to $\ddot{\bo{q}}_0$ that solves the acceleration problem:
+		
+		\begin{equation}
+			\ddot{\bo{q}}  = \bo{J}_K^+ (\bo{a}_K - \dot{\bo{J}}_K \dot{\bo{q}})
+			+
+			\bo{P}_N \ddot{\bo{q}}_0
+		\end{equation}		
+	%
+	where $\bo{P}_N = \bo{I} -  \bo{J}_K^+ \bo{J}_K$.
+	
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Position problem}
+	\begin{flushleft}
+		
+		What if we want to find such $\bo{q}^*$ that $\bo{r}_K(\bo{q}^*) = \bo{r}^*$. Can we do it?
+		
+		\bigskip
+		
+		Unlike previous, this is not a linear problem. It often involves trigonometric functions, and other nonlinear ones.
+		
+		\bigskip
+		
+		Our approach will be to linearize the expression $\bo{r}_K(\bo{q})$ and find its solution via an iterative procedure.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Position problem - update method}
+	\begin{flushleft}
+		
+		Given exact solution $\bo{q}_0$ for problem $\bo{r}_K(\bo{q}_0) = \bo{r}_K(0)$. Then, knowing velocity $\dot{\bo{q}}_0$, then we can find an approximation of the position in the next moment of time:
+		
+		\begin{equation}
+			\frac{\bo{q}_1 - \bo{q}_0}{\Delta t} \approx \dot{\bo{q}}_0
+		\end{equation}
+	
+		\begin{equation}
+		\bo{q}_1 \approx \bo{q}_0 + \dot{\bo{q}}_0 \Delta t
+		\end{equation}
+	
+		This works tolerably well, for improvements we can look to other schemes of solving ODEs.
+		
+		\bigskip
+	
+		But what if we don't have an exact solution $\bo{q}_0$? After all, it was that which allowed us to use local linearization.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Position problem - general}
+	\begin{flushleft}
+		
+		Given initial guess $\bo{q}_0$ we will try to solve the problem $\bo{r}_K(\bo{q}) = \bo{r}_K^*$. First let us define discrepancy:
+		
+		\begin{equation}
+			\bo{e}(\bo{q}) = \bo{r}_K(\bo{q}) - \bo{r}_K^*
+		\end{equation}		
+	
+		We define cost function $f =\bo{e}\T \bo{e}$, initial position $\bo{r}_{K, 0} = \bo{r}_K(\bo{q}_0)$, initial discrepancy $\bo{e}_0 =  \bo{r}_{K, 0} - \bo{r}_K^*$ and gen. coordinates displacement $\delta = \bo{q} - \bo{q}_0$ and produce Taylor expansion of the cost:
+		
+		\begin{equation}
+			f \approx \bo{e}_0\T \bo{e}_0 
+			+
+			\bo{e}_0\T \bo{J}_K \delta
+			+
+			 \delta \T \bo{J}_K\T \bo{e}_0
+			  +
+			  \delta \T \bo{J}_K\T \bo{J}_K \delta
+		\end{equation}	
+	
+	Now we take  derivative and set it to zero:
+	
+			\begin{equation}
+		2 \bo{e}_0\T \bo{J}_K
+		+
+		2 \delta \T \bo{J}_K\T \bo{J}_K = 0
+	\end{equation}	
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Position problem - general}
+	\begin{flushleft}
+		
+		We obtained expression:
+		
+		\begin{equation}
+			\delta = (\bo{J}_K\T \bo{J}_K)^{-1} \bo{J}_K\T \bo{e}_0
+		\end{equation}	
+	
+	And remembering the substitutions we made we get:
+	
+	\begin{align}
+		\bo{q} - \bo{q}_0 = (\bo{J}_K\T \bo{J}_K)^{-1} \bo{J}_K\T (\bo{r}_{K, 0} - \bo{r}_K^*) \\
+		\bo{q} = \bo{q}_0 + \bo{J}_K^+(\bo{r}_{K, 0} - \bo{r}_K^*)
+	\end{align}	
+
+	We can use the final expression to update our initial guess, then the-linearize the problem at the new position and repeat the process, until we converge.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Subspaces}
+	\begin{flushleft}
+		
+		How can we check if a velocity $\bo{v}_K$ can be achieved, given $\bo{v}_K = \bo{J}_K \dot{\bo{q}}$?
+		
+		\bigskip
+		
+		If $\bo{v}_K$ lies in the column space of $\bo{J}_K$, it is achievable:
+		
+		\begin{equation}
+			(\bo{I} - \bo{J}_K\bo{J}_K^+) \bo{v}_K = 0
+		\end{equation}	
+	
+	
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Subspaces}
+	\begin{flushleft}
+		
+		How can we check if a solution $\dot{\bo{q}}$ is minimal-norm, given $\bo{v}_K = \bo{J}_K \dot{\bo{q}}$?
+		
+		\bigskip
+		
+		If $\dot{\bo{q}}$ lies in the row space of $\bo{J}_K$, it is minimal:
+		
+		\begin{equation}
+			(\bo{I} - \bo{J}_K^+\bo{J}_K) \dot{\bo{q}} = 0
+		\end{equation}	
+		
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Thank you!}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\mygit}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\bigskip
+
+\centerline{\textcolor{black}{\qrcode[height=1.6in]{https://github.com/SergeiSa/Fundamentals-of-robotics-2022}}}
+
+\end{frame}
+
+\end{document}

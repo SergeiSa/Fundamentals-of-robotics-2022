@@ -429,7 +429,7 @@
 			\end{aligned}
 		\end{equation}
 		
-		In fact, if null space of $\bo{A}$ has $k$ dimensions, it implies that an $n$-dimensional subspace of $\mathbb{X}$ is mapped to a single element of $\mathbb{Y}$. 
+		In fact, if null space of $\bo{A}$ has $k$ dimensions, it implies that an $k$-dimensional subspace of $\mathbb{X}$ is mapped to a single element of $\mathbb{Y}$. 
 		
 		\bigskip
 		
@@ -524,6 +524,215 @@
 			\bo{y}_l = (\bo{I} - \bo{C}\bo{C}^\top) \bo{y} \in \mathcal{C}^\perp(\bo{A})
 		\end{equation}
 		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Singular Value Decomposition}
+	% \framesubtitle{Local coordinates}
+	\begin{flushleft}
+		
+		Given $\bo{A} \in \R^{n, m}$ we can find its Singular Value Decomposition (SVD):
+		
+		\begin{equation}
+			\bo{A} = 
+			\begin{bmatrix}
+				\bo{C} & \bo{L}
+			\end{bmatrix}
+			\begin{bmatrix}
+				\bo{\Sigma} & \bo{0} \\
+				\bo{0} & \bo{0}
+			\end{bmatrix}
+			\begin{bmatrix}
+				\bo{R}^\top \\ \bo{N}^\top
+			\end{bmatrix}
+		\end{equation}
+		
+		\begin{equation}
+			\bo{A} = 
+			\bo{C} \bo{\Sigma} \bo{R}^\top
+		\end{equation}
+		
+		where $\bo{C}$, $\bo{L}$, $\bo{R}$ and $\bo{N}$ are column, left null, row and null space bases (orthonormal), $\bo{\Sigma}$ is the diagonal matrix of singular values. The singular values are positive and softer in the decreasing order.
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Rank and pseudoinverse}
+	% \framesubtitle{Local coordinates}
+	\begin{flushleft}
+		
+		Rank of the matrix is computed as the size of $\bo{\Sigma}$. Note that numeric tolerance applies when deciding if the singular value is non-zero.
+		
+		\bigskip
+		
+		Pseudoinverse $\bo{A}^+$ is defined as:
+		
+		\begin{equation}
+			\bo{A}^+ = 
+			\begin{bmatrix}
+				\bo{R} & \bo{N}
+			\end{bmatrix}
+			\begin{bmatrix}
+				\bo{\Sigma}^{-1} & \bo{0} \\
+				\bo{0} & \bo{0}
+			\end{bmatrix}
+			\begin{bmatrix}
+				\bo{C}^\top \\ \bo{L}^\top
+			\end{bmatrix}
+		\end{equation}		
+		
+		\begin{equation}
+			\bo{A}^+ = 
+			\bo{R} \bo{\Sigma}^{-1} \bo{C}^\top
+		\end{equation}		
+	
+	Note that this proves that $\bo{A}^+$ lies in the row space of $\bo{A}$.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{SVD of a transpose}
+	% \framesubtitle{Local coordinates}
+	\begin{flushleft}
+		
+		Let's find SVD decomposition of a $\bo{A}^\top$:
+		
+		\begin{equation}
+			\bo{A}^\top = 
+			\begin{bmatrix}
+				\bo{C}_t & \bo{L}_t
+			\end{bmatrix}
+			\begin{bmatrix}
+				\bo{\Sigma}_t & \bo{0} \\
+				\bo{0} & \bo{0}
+			\end{bmatrix}
+			\begin{bmatrix}
+				\bo{R}_t^\top \\ \bo{N}_t^\top
+			\end{bmatrix}
+		\end{equation}
+		
+		Let us transpose it (remembering that transpose of a diagonal matrix the original matrix $\bo{\Sigma}_t^\top = \bo{\Sigma}_t$):
+		
+		
+		\begin{equation}
+			\bo{A} = 
+			\begin{bmatrix}
+				\bo{R}_t & \bo{N}_t
+			\end{bmatrix}
+			\begin{bmatrix}
+				\bo{\Sigma}_t & \bo{0} \\
+				\bo{0} & \bo{0}
+			\end{bmatrix}
+			\begin{bmatrix}
+				\bo{C}_t^\top \\ \bo{L}_t^\top
+			\end{bmatrix}
+		\end{equation}
+		
+		Thus we can see that the row space of the original matrix $\bo{A}$ is the column space of the transpose $\bo{A}^\top$. And the left null space of the original matrix $\bo{A}$ is the null space of the transpose $\bo{A}^\top$.
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{Projectors (1)}
+	% \framesubtitle{Local coordinates}
+	\begin{flushleft}
+		
+		Let's prove that $\bo{A}\bo{A}^+$ is equivalent to $\bo{C}\bo{C}^\top$:
+		
+		\begin{equation}
+			\bo{A} \bo{A}^+ = 
+			\bo{C} \bo{\Sigma} \bo{R}^\top 
+			\bo{R} \bo{\Sigma}^{-1} \bo{C}^\top
+		\end{equation}
+		
+		
+		\begin{equation}
+			\bo{A} \bo{A}^+ = 
+			\bo{C} \bo{\Sigma} \bo{\Sigma}^{-1} \bo{C}^\top
+		\end{equation}
+		
+		\begin{equation}
+			\bo{A} \bo{A}^+ = 
+			\bo{C} \bo{C}^\top
+		\end{equation}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Projectors (2)}
+	% \framesubtitle{Local coordinates}
+	\begin{flushleft}
+		
+		Let's prove that $\bo{A}^+\bo{A}$ is equivalent to $\bo{R}\bo{R}^\top$:
+		
+		\begin{equation}
+			\bo{A}^+ \bo{A} = 
+			\bo{R} \bo{\Sigma}^{-1} \bo{C}^\top
+			\bo{C} \bo{\Sigma} \bo{R}^\top 
+		\end{equation}
+		
+		\begin{equation}
+			\bo{A}^+ \bo{A} = 
+			\bo{R} \bo{\Sigma}^{-1} \bo{\Sigma} \bo{R}^\top 
+		\end{equation}		
+		
+		\begin{equation}
+			\bo{A}^+ \bo{A} = 
+			\bo{R} \bo{R}^\top 
+		\end{equation}			
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Projectors (3)}
+	% \framesubtitle{Local coordinates}
+	\begin{flushleft}
+		
+		Let us denote $\bo{P} = \bo{A}\bo{A}^+$. 
+		Let's prove that $\bo{P}\bo{P} = \bo{P}$:
+		
+		\begin{equation}
+			\bo{A} \bo{A}^+ \bo{A} \bo{A}^+ = 
+			\bo{C} \bo{\Sigma} \bo{R}^\top 
+			\bo{R} \bo{\Sigma}^{-1} \bo{C}^\top 
+			\bo{C} \bo{\Sigma} \bo{R}^\top 
+			\bo{R} \bo{\Sigma}^{-1} \bo{C}^\top
+		\end{equation}
+		
+		\begin{equation}
+			\bo{A} \bo{A}^+ \bo{A} \bo{A}^+ = 
+			\bo{C} \bo{\Sigma} \bo{\Sigma}^{-1}\bo{\Sigma} \bo{\Sigma}^{-1} \bo{C}^\top
+		\end{equation}	
+		
+		\begin{equation}
+			\bo{A} \bo{A}^+ \bo{A} \bo{A}^+ = 
+			\bo{C} \bo{C}^\top =
+			\bo{A} \bo{A}^+
+		\end{equation}		
+		
+		The same is true for $\bo{P} = \bo{A}^+\bo{A}$: we can prove that $\bo{A}^+\bo{A} \bo{A}^+\bo{A} = \bo{A}^+\bo{A}$.
 		
 	\end{flushleft}
 \end{frame}

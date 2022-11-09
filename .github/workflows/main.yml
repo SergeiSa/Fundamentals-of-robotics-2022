@@ -42,6 +42,24 @@ jobs:
           root_file: main.tex
           working_directory: Slides/Linkages3D/
 
+      - name: Compile LaTeX document Jacobians
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/Jacobians/
+
+      - name: Compile LaTeX document Subspaces
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/Subspaces/
+
+      - name: Compile LaTeX document InverseKinematics
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/InverseKinematics/
+
 
 
 
@@ -69,6 +87,24 @@ jobs:
           name: Linkages3D.pdf
           path: Slides/Linkages3D/main.pdf
 
+      - name: Save Jacobians artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Jacobians.pdf
+          path: Slides/Jacobians/main.pdf
+
+      - name: Save Subspaces artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Subspaces.pdf
+          path: Slides/Subspaces/main.pdf
+
+      - name: Save InverseKinematics artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: InverseKinematics.pdf
+          path: Slides/InverseKinematics/main.pdf
+
 
 
 
@@ -82,6 +118,9 @@ jobs:
           git add Slides/Introduction/main.pdf
           git add Slides/AlgebraOfTransformations/main.pdf
           git add Slides/Linkages3D/main.pdf
+          git add Slides/Jacobians/main.pdf
+          git add Slides/Subspaces/main.pdf
+          git add Slides/InverseKinematics/main.pdf
 
 
 
