@@ -330,14 +330,14 @@
 		We obtained expression:
 		
 		\begin{equation}
-			\delta = (\bo{J}_K\T \bo{J}_K)^{-1} \bo{J}_K\T \bo{e}_0
+			\delta = -(\bo{J}_K\T \bo{J}_K)^{-1} \bo{J}_K\T \bo{e}_0
 		\end{equation}	
 	
 	And remembering the substitutions we made we get:
 	
 	\begin{align}
-		\bo{q} - \bo{q}_0 = (\bo{J}_K\T \bo{J}_K)^{-1} \bo{J}_K\T (\bo{r}_{K, 0} - \bo{r}_K^*) \\
-		\bo{q} = \bo{q}_0 + \bo{J}_K^+(\bo{r}_{K, 0} - \bo{r}_K^*)
+		\bo{q} - \bo{q}_0 = -(\bo{J}_K\T \bo{J}_K)^{-1} \bo{J}_K\T (\bo{r}_{K, 0} - \bo{r}_K^*) \\
+		\bo{q} = \bo{q}_0 - \bo{J}_K^+(\bo{r}_{K, 0} - \bo{r}_K^*)
 	\end{align}	
 
 	We can use the final expression to update our initial guess, then the-linearize the problem at the new position and repeat the process, until we converge.
