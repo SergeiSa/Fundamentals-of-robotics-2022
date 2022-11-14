@@ -304,21 +304,26 @@
 	\begin{flushleft}
 		
 		Let us try to solve three tasks, one after another:
-		
+		%
 		\begin{align}
 			\bo{J}_1 (\dq_1 + \dq_2 + \dq_3) = \bo{v}_1 \\
 			\bo{J}_2 \bo{P}_1 (\dq_1 + \dq_2 + \dq_3) = \bo{v}_2 \\
 			\bo{J}_3 \bo{P}_2 (\dq_1 + \dq_2 + \dq_3) = \bo{v}_3
 		\end{align}
+	%
+		\begin{align}
+			\bo{P}_1 =\bo{I} - \bo{J}_1^+\bo{J}_1 \\
+			\bo{P}_2 =\bo{P}_1 (\bo{I} - \bo{J}_2^+\bo{J}_2)
+		\end{align}
+		
+		Where $\bo{P}_1$ is a projector onto the null space of $\bo{J}_1$, and $\bo{P}_2$ is a projector onto the intersection of null spaces of $\bo{J}_1$ and $\bo{J}_2$.
 		
 		We propose to solve it as:
-		
+		%
 		\begin{align}
 	\dq_1 &= \bo{J}_1^+ \bo{v}_1 \\
 	\dq_2 &= \bo{P}_1 \bo{J}_2^+ \bo{v}_2 \\
-	\dq_3 &= \bo{P}_2 \bo{J}_3^+ \bo{v}_3 \\
-	\bo{P}_1 & =\bo{I} - \bo{J}_1^+\bo{J}_1 \\
-	\bo{P}_2 & =\bo{P}_1 (\bo{I} - \bo{J}_2^+\bo{J}_2)
+	\dq_3 &= \bo{P}_2 \bo{J}_3^+ \bo{v}_3
 		\end{align}		
 		
 	\end{flushleft}
@@ -333,11 +338,12 @@
 		
 		\bigskip
 		
-		Given that $\bo{J}_1 \dq_1 = \bo{v}_1$, we obtain:
+		If the first task has a zero-residual $\bo{J}_1 \dq_1 = \bo{v}_1$, we obtain:
 		
 		\begin{align}
-			\bo{J}_1 (\dq_2 + \dq_3) = 0 \\
-			\bo{J}_1 (\bo{P}_1 \bo{J}_2^+ \bo{v}_2 
+			\textcolor{mygray}{\text{(what we want to prove)}} \ \ \ 
+			&\bo{J}_1 (\dq_2 + \dq_3) = 0 \\
+			&\bo{J}_1 (\bo{P}_1 \bo{J}_2^+ \bo{v}_2 
 			+ 
 			\bo{P}_2 \bo{J}_3^+ \bo{v}_3) = 0 
 		\end{align}
@@ -347,7 +353,7 @@
 		\begin{align}
 			\bo{J}_1 (\bo{P}_1 \bo{J}_2^+ \bo{v}_2 
 			+ 
-			\bo{P}_2 \bo{J}_3^+ \bo{v}_3) = 0 + 0 = 0
+			\bo{P}_2 \bo{J}_3^+ \bo{v}_3) = \bo{J}_1(0 + 0) = 0
 		\end{align}
 		
 	\end{flushleft}
@@ -364,8 +370,9 @@
 		\bigskip
 		
 		Given that $\bo{J}_2 \bo{P}_1 \dq_2 = \bo{v}_2$, we obtain:
-		
+		%
 		\begin{align}
+			\textcolor{mygray}{\text{(what we want to prove)}} \ \ \ 
 			\bo{J}_2 \bo{P}_1 (\dq_1 + \dq_3) = 0 
 			\\
 			\bo{J}_2 \bo{P}_1 (\bo{J}_1^+ \bo{v}_1 
@@ -399,6 +406,7 @@
 		Given that $\bo{J}_3 \bo{P}_2 \dq_3 = \bo{v}_3$, we obtain:
 		
 		\begin{align}
+			\textcolor{mygray}{\text{(what we want to prove)}} \ \ \ 
 			\bo{J}_3 \bo{P}_2 (\dq_1 + \dq_2) = 0 
 			\\
 			\bo{J}_3 \bo{P}_2 (

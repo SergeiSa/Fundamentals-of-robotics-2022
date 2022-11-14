@@ -499,7 +499,7 @@
 		
 		\bigskip
 		
-		We will later prove that left null space of $\bo{A}$ is equivalent to the null space of $\bo{A}^\top$.
+		Notice that $\bo{y}\T \bo{A} = 0$ implies $\bo{A}\T \bo{y} = 0$, meaning that left null space of $\bo{A}$ is equivalent to the null space of $\bo{A}\T$.
 		
 		
 	\end{flushleft}
@@ -733,6 +733,64 @@
 		\end{equation}		
 		
 		The same is true for $\bo{P} = \bo{A}^+\bo{A}$: we can prove that $\bo{A}^+\bo{A} \bo{A}^+\bo{A} = \bo{A}^+\bo{A}$.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Projectors (4)}
+	% \framesubtitle{Local coordinates}
+	\begin{flushleft}
+		
+		Let's prove that $\bo{P}^+ = \bo{P}$. 
+		
+		First, we find basis in the linear space where $\bo{P}$ projects onto: $\bo{C} = \text{orth}(\bo{P})$, therefore $\bo{P} = \bo{C}\bo{C}\T$.
+		
+		\begin{align}
+			\bo{P}\bo{P}^+ &= \bo{I}, \\
+			\bo{C}\bo{C}\T\bo{P}^+ &= \bo{I}, \\
+			\bo{C}\T \bo{P}^+ &= \bo{C}\T, \\
+			\bo{P}^+ &= \bo{C} \bo{C}\T, \\
+			\bo{P}^+ &= \bo{P}, \qed
+		\end{align}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Projectors - other properties}
+	% \framesubtitle{Local coordinates}
+	\begin{flushleft}
+		
+		Given two linear spaces $\mathcal L_1$ and $\mathcal L_2$ with bases $\bo{B}_1$ and $\bo{B}_2$ and projectors onto them $\bo{P}_1$ and $\bo{P}_2$:
+		
+		\bigskip
+		
+		\begin{itemize}
+			\item  $\bo{P} = \bo{P}_1 \bo{P}_2 = \bo{B}_1 \bo{B}_1^+   \bo{B}_2 \bo{B}_2^+$ is a projector onto intersection of $\mathcal L_1$ and $\mathcal L_2$.
+			
+			\item  $\bo{P}_N = (\bo{I} - \bo{P}_1)(\bo{I} - \bo{P}_2) = (\bo{I} - \bo{B}_1 \bo{B}_1^+)(\bo{I} - \bo{B}_2 \bo{B}_2^+)$ is a projector onto the intersection of the null space of $\bo{B}_1$ and $\bo{B}_2$.
+			
+			\item $\bo{N} = \text{null}\left( \begin{bmatrix}
+				\bo{B}_1 \\ \bo{B}_2
+			\end{bmatrix} \right)$; 
+		$\bo{P}_N = \bo{N} \bo{N}\T$; 
+		$\bo{P}_N = 
+		\bo{I} - 
+		\begin{bmatrix}
+			\bo{B}_1 \\ \bo{B}_2
+		\end{bmatrix}^+
+	\begin{bmatrix}
+		\bo{B}_1 \\ \bo{B}_2
+	\end{bmatrix}$.
+			
+			\item If $\bo{x} \in \mathcal L_1$, then $(\bo{I} - \bo{P}_1)(\bo{I} - \bo{P}_2)\bo{x} = 0$ and $(\bo{I} - \bo{P}_1)\bo{P}_2\bo{x} = 0$.
+		\end{itemize}
 		
 	\end{flushleft}
 \end{frame}
