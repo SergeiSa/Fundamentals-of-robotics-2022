@@ -1,0 +1,464 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+\newcommand{\dq} {\dot{\mathbf{q}}}
+
+
+\title{Task Prioritization}
+\subtitle{Fundamentals of Robotics, Lecture 7}
+\author{by Sergei Savin}
+\centering
+\date{\mydate}
+
+
+
+\begin{document}
+\maketitle
+
+
+
+
+
+\begin{frame}{Linear Velocity and Angular Velocity}
+	\begin{flushleft}
+		
+		Consider a point $K$ (position is given by vector $\bo{r}_K(\bo{q})$). We can formulate the velocity problem as such - find such $\dot{\bo{q}}^*$ that:
+		
+		\begin{equation}
+			\bo{J}_K \dot{\bo{q}}^* = \bo{v}_K
+		\end{equation}		
+		
+		We can solve velocity problem for the point $K$:
+		
+		\begin{equation}
+			\dot{\bo{q}}^* = \bo{J}_K^+ \bo{v}_K + \bo{N} \bo{z}
+		\end{equation}
+	
+		Now, assume that we want to also find such velocity that one of the links acquires angular velocity $\omega$:
+	
+		\begin{equation}
+			\bo{J}_\omega \dot{\bo{q}}^* = \omega
+		\end{equation}							
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Linear Velocity and Angular Velocity}
+	\begin{flushleft}
+		
+		How do we solve it? We can easily combine both problems together and then we get:
+		
+		\begin{equation}
+			\begin{bmatrix}
+				\bo{J}_K \\ \bo{J}_\omega
+			\end{bmatrix}
+			 \dot{\bo{q}}^* = 
+			 \begin{bmatrix}
+			 	\bo{v}_K \\ \omega
+			 \end{bmatrix}
+		\end{equation}				
+	
+		Which is solved as:
+		
+		\begin{equation}
+	\dot{\bo{q}}^* = 
+	\begin{bmatrix}
+		\bo{J}_K \\ \bo{J}_\omega
+	\end{bmatrix}^+
+	\begin{bmatrix}
+		\bo{v}_K \\ \omega
+	\end{bmatrix}
+\end{equation}			
+		
+		If a solution exists, we will obtain it. But if a solution does not exit, we will find a least-residual solution, with errors distributed across both \emph{tasks}. What if we want to make sure one task is achieved, while the second task can be failed?
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Linear Velocity and Angular Velocity}
+	\begin{flushleft}
+		
+		As we noted before, all solutions to the velocity problem are given as:
+		
+		\begin{equation}
+			\dot{\bo{q}}^* = \bo{J}_K^+ \bo{v}_K + \bo{N} \bo{z}
+		\end{equation}
+		
+		Then we can re-write the angular velocity problem $\bo{J}_\omega \dot{\bo{q}}^* = \omega$ as:
+		
+		\begin{equation}
+			\bo{J}_\omega (\bo{J}_K^+ \bo{v}_K + \bo{N} \bo{z}) = \omega
+		\end{equation}		
+	
+	This can be solved:
+	
+		\begin{align}
+			\bo{J}_\omega \bo{J}_K^+ \bo{v}_K + \bo{J}_\omega \bo{N} \bo{z} = \omega \\
+			\bo{z} = (\bo{J}_\omega\bo{N} )^{-1}(\omega - \bo{J}_\omega \bo{J}_K^+ \bo{v}_K) \\
+			\dot{\bo{q}}^{**} =  \bo{N}(\bo{J}_\omega\bo{N} )^{-1}(\omega - \bo{J}_\omega \bo{J}_K^+ \bo{v}_K) + \bo{J}_K^+ \bo{v}_K
+		\end{align}			
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Linear Velocity and Angular Velocity}
+	\begin{flushleft}
+		
+		Considering the solution $\dot{\bo{q}}^{**} =  \bo{N}(\bo{J}_\omega\bo{N} )^{-1}(\omega - \bo{J}_\omega \bo{J}_K^+ \bo{v}_K) + \bo{J}_K^+ \bo{v}_K$ we can observe the following:
+		
+		\bigskip
+		
+		\begin{itemize}
+			\item The solution looks a little ugly.
+			
+			\item It looks like it will only get worse if we consider the third task.
+		\end{itemize}
+	
+	\bigskip
+	
+		We can do better.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Task prioritization}
+	\begin{flushleft}
+		
+		By now we know how to solve a problem of the type $\bo{J}_1 \dq =\bo{v}_1$. The solution is:
+		
+		\begin{equation}
+			\dq_1 = \bo{J}_1^+ \bo{v}_1
+		\end{equation}
+	
+		We add second task $\bo{J}_2 (\dq_1 + \dq_2) =\bo{v}_2$. Can we solve it, while keeping the solution to the first task $\bo{J}_1 (\dq_1 + \dq_2) =\bo{v}_1$?
+		
+		\bigskip
+		
+		Our proposition: we solve an alternative task:
+		
+		\begin{align}
+			\bo{J}_2 \bo{P}_1 (\dq_1 + \dq_2) =\bo{v}_2 \\
+			\bo{P}_1 = \bo{I} - \bo{J}_1^+ \bo{J}_1
+		\end{align}
+		
+		We claim that the first and the second task will both be satisfied (if possible) even if we solve them \emph{sequentially}.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Task prioritization}
+	\begin{flushleft}
+		
+		Let us study the proposed solution. First, the joint velocities $\dq_1$ are found as $\dq_1 = \bo{J}_1^+ \bo{v}_1$.
+		
+		\bigskip
+		
+		Second, matrix $\bo{P}_1 = \bo{I} - \bo{J}_1^+ \bo{J}_1$ is a null space projector for the jacobian $\bo{J}_1$. 
+		
+		\bigskip
+		
+		Third, we consider equation $\bo{J}_2 \bo{P}_1 (\dq_1 + \dq_2) =\bo{v}_2$:
+		
+		\begin{equation}
+			\bo{J}_2 \bo{P}_1 (\bo{J}_1^+ \bo{v}_1 + \dq_2) =\bo{v}_2
+		\end{equation}
+	
+		Since $\bo{J}_1^+ \in \text{row}(\bo{J}_1)$ we can conclude that $\bo{P}_1 \bo{J}_1^+ = 0$. Finally, we have the equation in the form:
+		
+		\begin{equation}
+			\bo{J}_2 \bo{P}_1 \dq_2 =\bo{v}_2
+		\end{equation}		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Task prioritization}
+	\begin{flushleft}
+		
+		Given $\bo{J}_2 \bo{P}_1 \dq_2 =\bo{v}_2$ we can solve it:
+		
+		\begin{align}
+			\bo{P}_1 \dq_2 =\bo{J}_2^+ \bo{v}_2 \\
+			\bo{P}_1 = \bo{C}_1 \bo{C}_1\T \\
+		    \bo{C}_1 \bo{C}_1\T \dq_2 =\bo{J}_2^+ \bo{v}_2 \\
+			 \bo{C}_1\T \dq_2 =\bo{C}_1\T \bo{J}_2^+ \bo{v}_2 \\
+			 \dq_2 = \bo{C}_1 \bo{C}_1\T \bo{J}_2^+ \bo{v}_2 \\
+			 \dq_2 = \bo{P}_1 \bo{J}_2^+ \bo{v}_2
+		\end{align}		
+	
+		We can summarize it as $(\bo{J}_2 \bo{P}_1)^+  = \bo{P}_1 \bo{J}_2^+$.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Task prioritization - verification}
+	\begin{flushleft}
+		
+		So, The solution is: 
+		
+		\begin{align}
+			\dq_1 = \bo{J}_1^+ \bo{v}_1 \\
+			\dq_2 = \bo{P}_1 \bo{J}_2^+ \bo{v}_2
+		\end{align}	
+	
+		Can we prove that the following holds?
+		
+		\begin{equation}
+			\begin{cases}
+				\bo{J}_1 (\dq_1 + \dq_2) =\bo{v}_1 \\
+				\bo{J}_2 \bo{P}_1 (\dq_1 + \dq_2) =\bo{v}_2
+			\end{cases}
+		\end{equation}			
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Task prioritization - verification}
+	\begin{flushleft}
+		
+	 We study equation $\bo{J}_1 (\dq_1 + \dq_2) =\bo{v}_1$:
+	 
+	 	\begin{align}
+	 		 \bo{J}_1\dq_1 + 
+	 		 \bo{J}_1\bo{P}_1 \bo{J}_2^+ \bo{v}_2 =
+	 		 \bo{v}_1
+	 	\end{align}	
+ 	
+ 	Assuming that $\bo{J}_1\dq_1 = \bo{v}_1$ (the residual is zero), we get:
+ 	
+	 	\begin{align}
+	\bo{J}_1\bo{P}_1 \bo{J}_2^+ \bo{v}_2 = 0
+		\end{align}	 	
+		
+		Since $\bo{P}_1$ is null space projector it means that its columns lie in the null space of $\bo{J}_1$ - meaning that $\bo{J}_1\bo{P}_1 = 0$, q.e.d.
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Task prioritization - verification}
+	\begin{flushleft}
+		
+		We study equation $\bo{J}_2 \bo{P}_1 (\dq_1 + \dq_2) =\bo{v}_2$:
+		
+		\begin{align}
+			\bo{J}_2 \bo{P}_1 \bo{J}_1^+ \bo{v}_1 + 
+			\bo{J}_2 \bo{P}_1 \dq_2 =
+			\bo{v}_2
+		\end{align}	
+	
+%		For projectors it is true that $\bo{P}_1 = \bo{P}_1 \bo{P}_1$, so:
+%		
+%		\begin{align}
+%	\bo{J}_2 \bo{J}_1^+ \bo{v}_1 + 
+%	\bo{J}_2 \bo{P}_1 \bo{P}_1 \bo{J}_2^+ \bo{v}_2 =
+%	\bo{v}_2 
+%	\\
+%	\bo{J}_2 \bo{J}_1^+ \bo{v}_1 + 
+%	\bo{J}_2 \bo{P}_1  \dq_2 =
+%	\bo{v}_2
+%		\end{align}			
+		
+		If $\bo{J}_2 \bo{P}_1  \dq_2 =
+		\bo{v}_2$, meaning that we found a zero-residual solution, then:
+		
+		\begin{align}
+			\bo{J}_2 \bo{P}_1 \bo{J}_1^+ \bo{v}_1  = 0
+		\end{align}	
+	
+	Since $\bo{J}_1^+$ is in the row space of $\bo{J}_1$, so $\bo{P}_1 \bo{J}_1^+ = 0$.
+		
+		\begin{align}
+			\bo{J}_2 \bo{0} \bo{v}_1  &= 0 \\
+			0 &= 0, \ \ \ \text{q.e.d.}
+		\end{align}	
+	
+	Thus, we proved that the proposed solution works.
+	
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{3 tasks}
+	\begin{flushleft}
+		
+		Let us try to solve three tasks, one after another:
+		
+		\begin{align}
+			\bo{J}_1 (\dq_1 + \dq_2 + \dq_3) = \bo{v}_1 \\
+			\bo{J}_2 \bo{P}_1 (\dq_1 + \dq_2 + \dq_3) = \bo{v}_2 \\
+			\bo{J}_3 \bo{P}_2 (\dq_1 + \dq_2 + \dq_3) = \bo{v}_3
+		\end{align}
+		
+		We propose to solve it as:
+		
+		\begin{align}
+	\dq_1 &= \bo{J}_1^+ \bo{v}_1 \\
+	\dq_2 &= \bo{P}_1 \bo{J}_2^+ \bo{v}_2 \\
+	\dq_3 &= \bo{P}_2 \bo{J}_3^+ \bo{v}_3 \\
+	\bo{P}_1 & =\bo{I} - \bo{J}_1^+\bo{J}_1 \\
+	\bo{P}_2 & =\bo{P}_1 (\bo{I} - \bo{J}_2^+\bo{J}_2)
+		\end{align}		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{3 tasks - verification}
+	\begin{flushleft}
+		
+		First equation: $\bo{J}_1 (\dq_1 + \dq_2 + \dq_3) = \bo{v}_1$.
+		
+		\bigskip
+		
+		Given that $\bo{J}_1 \dq_1 = \bo{v}_1$, we obtain:
+		
+		\begin{align}
+			\bo{J}_1 (\dq_2 + \dq_3) = 0 \\
+			\bo{J}_1 (\bo{P}_1 \bo{J}_2^+ \bo{v}_2 
+			+ 
+			\bo{P}_2 \bo{J}_3^+ \bo{v}_3) = 0 
+		\end{align}
+		
+		We can observe $\bo{J}_1 \bo{P}_1 = 0$ and $\bo{J}_1 \bo{P}_2 =\bo{J}_1 \bo{P}_1 (\bo{I} - \bo{J}_2^+\bo{J}_2)  = 0$:
+		
+		\begin{align}
+			\bo{J}_1 (\bo{P}_1 \bo{J}_2^+ \bo{v}_2 
+			+ 
+			\bo{P}_2 \bo{J}_3^+ \bo{v}_3) = 0 + 0 = 0
+		\end{align}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{3 tasks - verification}
+	\begin{flushleft}
+		
+		Second equation: $\bo{J}_2 \bo{P}_1 (\dq_1 + \dq_2 + \dq_3) = \bo{v}_2$.
+		
+		\bigskip
+		
+		Given that $\bo{J}_2 \bo{P}_1 \dq_2 = \bo{v}_2$, we obtain:
+		
+		\begin{align}
+			\bo{J}_2 \bo{P}_1 (\dq_1 + \dq_3) = 0 
+			\\
+			\bo{J}_2 \bo{P}_1 (\bo{J}_1^+ \bo{v}_1 
+			+ 
+			\bo{P}_2 \bo{J}_3^+ \bo{v}_3) = 0 
+			\\
+			 \bo{J}_2 \bo{P}_1 \bo{P}_2 \bo{J}_3^+ \bo{v}_3 = 0  \\
+			 \bo{J}_2 \bo{P}_2 \bo{J}_3^+ \bo{v}_3 = 0
+		\end{align}
+		
+		Matrix $\bo{P}_2$ is null space projector for the $\bo{J}_2$, further projected onto the null space of $\bo{J}_1$; hence $\bo{J}_2 \bo{P}_2 = 0$: 
+		
+		\begin{align}
+			\bo{J}_2 \bo{P}_2 \bo{J}_3^+ \bo{v}_3 = 
+			\bo{0} \bo{J}_3^+ \bo{v}_3 = 0 = 0
+		\end{align}
+	
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{3 tasks - verification}
+	\begin{flushleft}
+		
+		Third equation: $\bo{J}_3 \bo{P}_2 (\dq_1 + \dq_2 + \dq_3) = \bo{v}_3$.
+		
+		\bigskip
+		
+		Given that $\bo{J}_3 \bo{P}_2 \dq_3 = \bo{v}_3$, we obtain:
+		
+		\begin{align}
+			\bo{J}_3 \bo{P}_2 (\dq_1 + \dq_2) = 0 
+			\\
+			\bo{J}_3 \bo{P}_2 (
+			\bo{J}_1^+ \bo{v}_1
+			 + 
+			 \bo{P}_1 \bo{J}_2^+ \bo{v}_2) = 0 
+		\end{align}
+		
+		We can observe that $\bo{P}_2  \bo{J}_1^+ = 0$ and $\bo{P}_2 \bo{P}_1 \bo{J}_2^+ = 0$, so
+		
+		\begin{align}
+	\bo{J}_3 \bo{P}_2\bo{J}_1^+ \bo{v}_1
+	+ 
+	\bo{J}_3 \bo{P}_2 \bo{P}_1 \bo{J}_2^+ \bo{v}_2
+	= 
+	\bo{J}_3 \bo{0} \bo{v}_1
+	+ 
+	\bo{J}_3 \bo{0} \bo{v}_2  = 0 = 0
+		\end{align}		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{N tasks - verification}
+	\begin{flushleft}
+		
+		In general, we have the following method for sequential tasks:
+		
+		\begin{align}
+			\dq_i &= \bo{P}_{i-1} \bo{J}_i^+ \bo{v}_i \\
+			\bo{P}_i & =\bo{P}_{i-1} (\bo{I} - \bo{J}_i^+\bo{J}_i)
+		\end{align}		
+		
+		We can see advantages of the approach:
+		
+		\begin{itemize}
+			\item Complexity does not increase with the number of tasks
+			
+			\item We only need to invert jacobians once
+		\end{itemize}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Thank you!}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\mygit}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\bigskip
+
+\centerline{\textcolor{black}{\qrcode[height=1.6in]{https://github.com/SergeiSa/Fundamentals-of-robotics-2022}}}
+
+\end{frame}
+
+\end{document}
