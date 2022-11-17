@@ -10,6 +10,8 @@ This repository contains regularly updated course materials. You can use lecture
 * Lecture 4 (Jacobians) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/Jacobians
 * Lecture 5 (Fundamental subspaces) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/Subspaces
 * Lecture 6 (Inverse kinematics) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/InverseKinematics
+* Lecture 7 (Task prioritization) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/KinematicsAndTasks
+* Lecture 8 (Dynamical equations) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/DynamicsManipulatorEq
 
 # Lecture videos (2022 offering)
 
@@ -19,6 +21,9 @@ This repository contains regularly updated course materials. You can use lecture
 * Lecture 2 (Change of bases) - https://youtu.be/xSFuJYf9Z20
 * Lecture 3 (Frame transformation for serial linkages in 3D) - https://youtu.be/MTff24iTobg
 * Lecture 4 (Transformations, Jacobians, angular velocity) - https://youtu.be/Sqezz96pVMQ
+* Lecture 5 (Fundamental Subspaces, Null space, Column space) - https://youtu.be/k1_oDISymIo
+* Lecture 6 (Inverse kinematics) - https://youtu.be/l3pOnPsE2D8
+
 
 # Assignments
 
