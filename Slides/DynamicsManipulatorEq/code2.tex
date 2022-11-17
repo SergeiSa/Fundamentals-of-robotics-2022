@@ -1,0 +1,3 @@
+\begin{lstlisting}[language=Matlab]
+C_times_v = reshape(dHdt*v, [], 1) - 0.5*( jacobian( reshape(H, [], 1), q)'*kron(v, v) );
+\end{lstlisting}

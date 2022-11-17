@@ -60,6 +60,18 @@ jobs:
           root_file: main.tex
           working_directory: Slides/InverseKinematics/
 
+      - name: Compile LaTeX document KinematicsAndTasks
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/KinematicsAndTasks/
+
+      - name: Compile LaTeX document DynamicsManipulatorEq
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/DynamicsManipulatorEq/
+
 
 
 
@@ -105,6 +117,18 @@ jobs:
           name: InverseKinematics.pdf
           path: Slides/InverseKinematics/main.pdf
 
+      - name: Save KinematicsAndTasks artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: KinematicsAndTasks.pdf
+          path: Slides/KinematicsAndTasks/main.pdf
+
+      - name: Save DynamicsManipulatorEq artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: DynamicsManipulatorEq.pdf
+          path: Slides/DynamicsManipulatorEq/main.pdf
+
 
 
 
@@ -121,6 +145,8 @@ jobs:
           git add Slides/Jacobians/main.pdf
           git add Slides/Subspaces/main.pdf
           git add Slides/InverseKinematics/main.pdf
+          git add Slides/KinematicsAndTasks/main.pdf
+          git add Slides/DynamicsManipulatorEq/main.pdf
 
 
 
