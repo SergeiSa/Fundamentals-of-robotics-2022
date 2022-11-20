@@ -5,8 +5,8 @@
 \newcommand{\dq} {\dot{\mathbf{q}}}
 
 
-\title{Robot Dynamics}
-\subtitle{Fundamentals of Robotics, Lecture 8}
+\title{Nonlinear Control, PD, Gravity compensation, Lyapunov}
+\subtitle{Fundamentals of Robotics, Lecture 9}
 \author{by Sergei Savin}
 \centering
 \date{\mydate}
@@ -19,494 +19,300 @@
 
 
 
-\begin{frame}{Lagrange equations}
-	% \framesubtitle{O}
+
+\begin{frame}{Lyapunov method: stability criteria}
+	% \framesubtitle{Parameter estimation}
 	\begin{flushleft}
 		
-		Remember Lagrange equations:
-		
-		\begin{equation}
-			\label{eq:Lagrange}
-			\frac{d}{dt} \bigg( 
-			\frac{\partial T }{\partial \dot{\bo{q}}}
-			\bigg) - 
-			\frac{\partial T }{\partial \bo{q}} = \tau
-		\end{equation}
-		
-		Let us remember that in the general case of point masses, kinetic energy is:
-		
-		\begin{equation}
-			\label{eq:kinetic_energy}
-			T = \sum 0.5 m_i \dot{\bo{r}}_i^\top \dot{\bo{r}}_i,
-		\end{equation}
-		
-		and in the general case of rigid bodies, it is:
-		
-		\begin{equation}
-			\label{eq:kinetic_energy_rigid_body}
-			T = \sum 0.5 m_i \dot{\bo{r}}_i^\top \dot{\bo{r}}_i + \sum 0.5 \bo{w}_i^\top \bo{I}_i \bo{w}_i,
-		\end{equation}
-		
-		Where $\dot{\bo{r}}_i$ is the velocity of the center of mass of the $i$-th body, and $\bo{w}$ is the angular velocity of that body.
-		
-	\end{flushleft}
-\end{frame}
-
-
-
-
-\begin{frame}{Kinetic energy encoding}
-	\framesubtitle{Part 1}
-	\begin{flushleft}
-		
-		Using chain rule we can describe the velocity of the center of mass:
-		
-		\begin{equation}
-			\dot{\bo{r}}_i = \frac{\partial \bo{r}_i }{\partial {\bo{q}}} \dot{\bo{q}} = \bo{J}^v_i \dot{\bo{q}}
-		\end{equation}
-		
-		This establishes the connection between $\dot{\bo{r}}_i$ and generalized velocities.
-		
-	\end{flushleft}
-\end{frame}
-
-
-
-
-\begin{frame}{Kinetic energy encoding}
-	\framesubtitle{Part 2}
-	\begin{flushleft}
-		
-		For the rotations, it is not as simple. We start by using a Poisson formula to connect rotation matrix $\bo{T}(\bo{q})$ of a body to angular velocity of a body:
-		
-		\begin{equation}
-			\bo{W}(\bo{q}, \dot{\bo{q}}) = \bo{T} \dot{\bo{T}}, \ \ \dot{\bo{T}}(\bo{q}, \dot{\bo{q}}) = \frac{\partial \bo{T}}{\partial {\bo{q}}} \dot{\bo{q}}
-		\end{equation}
-		
-		where $\bo{W}(\bo{q}, \dot{\bo{q}}) = 
-		\begin{bmatrix}  0         & -\omega_3 &  \omega_2  \\
-			\omega_3  & 0         & -\omega_1 \\
-			-\omega_2  & \omega_1  &  0
-		\end{bmatrix}$.
-		
-		We can create notation:
-		
-		\begin{equation}
-			\label{eq:angular_velocity}
-			\bo{w}(\bo{q}, \dot{\bo{q}}) = 
-			\begin{bmatrix}  
-				-\bo{W}_{2, 3} \\ 
-				\bo{W}_{1, 3} \\ 
-				-\bo{W}_{1, 2}
-			\end{bmatrix}
-		\end{equation}
-		
-	\end{flushleft}
-\end{frame}
-
-
-
-
-
-\begin{frame}{Kinetic energy encoding}
-	\framesubtitle{Part 3}
-	\begin{flushleft}
-		
-		
-		\begin{block}{Homework 1}
-			Prove that $\bo{w}(\bo{q}, \dot{\bo{q}})$ is linear with respect to $\dot{\bo{q}}$.
+		\begin{block}{Asymptotic stability criteria}
+			Autonomous dynamic system $\dot{\bo{x}} = \bo{f}(\bo{x})$ is assymptotically stable, if there exists a scalar function $V = V(\bo{x}) > 0$, whose time derivative is negative $\dot V(\bo{x}) < 0$, except $V(\bo{0}) = 0$, $\dot V(\bo{0}) = 0$.
 		\end{block}
 		
-		Now we can \emph{find angular velocity Jacobian} of \eqref{eq:angular_velocity} w.r.t. $\dot{\bo{q}}$:
+		\begin{block}{Marginal stability criteria}
+			$\dot{\bo{x}} = \bo{f}(\bo{x})$ is stable in the sense of Lyapunov, $\exists V(\bo{x}) > 0$, $\dot V(\bo{x}) \leq 0$.
+		\end{block}
 		
-		\begin{equation}
-			\label{eq:angular_velocity_jacobian}
-			\bo{J}^w_i = \frac{\partial \bo{w}_i }{\partial \dot{\bo{q}}}
-		\end{equation}
-		
-		Since $\bo{w}_i$ is linear w.r.t. $\dot{\bo{q}}$, we can represent it as:
-		
-		\begin{equation}
-			\bo{w}_i  = \bo{J}^w_i \dot{\bo{q}}
-		\end{equation}
-		
-		
-	\end{flushleft}
-\end{frame}
-
-
-
-
-
-\begin{frame}{Kinetic energy encoding}
-	\framesubtitle{Part 4}
-	\begin{flushleft}
-		
-		
-		Therefor me can rewrite the kinetic energy in terms of generalized velocity:
-		
-		\begin{equation}
-			T = \sum 0.5 \dot{\bo{q}}^\top (\bo{J}^v_i)^\top m_i \bo{J}^v_i \dot{\bo{q}} 
-			+ 
-			\sum 0.5 \dot{\bo{q}}^\top (\bo{J}^w_i)^\top \bo{I}_i \bo{J}^w_i \dot{\bo{q}} 
-		\end{equation}
-		
-		Kinetic energy is a \emph{quadratic form} of the generalized velocities.
-		
-		We can define the matrix of the quadratic form:
-		
-		\begin{equation}
-			\label{eq:JSIM}
-			\bo{H} = \sum (\bo{J}^v_i)^\top m_i \bo{J}^v_i 
-			+ 
-			\sum (\bo{J}^w_i)^\top \bo{I}_i \bo{J}^w_i 
-		\end{equation}
+		\begin{definition}
+			Function $V(\bo{x}) > 0$ in this case is called \emph{Lyapunov function}.
+		\end{definition}
 		
 		\bigskip
 		
-		And therefor: $T = 0.5 \dot{\bo{q}}^\top \bo{H} \dot{\bo{q}}$
+		This is not the only type of stability as you remember, you are invited to study criteria for other stability types on your own.
 		
 	\end{flushleft}
 \end{frame}
 
 
-
-
-\begin{frame}{Generalized inertia}
-	\framesubtitle{Part 1}
+\begin{frame}{Basic second-order system}
 	\begin{flushleft}
 		
-		
-		We can find derivatives of the kinetic energy (remembering that $T = T^\top$, and therefore $\bo{H} = \bo{H}^\top$):
-		
-		\begin{equation}
-			\frac{\partial T }{\partial \dot{\bo{q}}} = 
-			\bo{H} \dot{\bo{q}}
-		\end{equation}
+		Let us consider the following basic system:
 		
 		\begin{equation}
-			\frac{\partial T }{\partial \bo{q}} = 
-			0.5 \dot{\bo{q}}^\top \frac{\partial \bo{H} }
-			{\partial \bo{q}} \dot{\bo{q}}
+			\ddot{\bo{q}} + \bo{K}_d \dot{\bo{q}} + \bo{K}_p\bo{q} = 0
 		\end{equation}
-		
-		
-		Notice that it is very tempting to say that $0.5 \dot{\bo{q}}^\top \frac{\partial \bo{H} }
-		{\partial \bo{q}} \dot{\bo{q}}
-		=
-		0.5 \dot{\bo{q}}^\top \dot{ \bo{H} }$ but it is \emph{not} the case. $\frac{\partial \bo{H} }
-		{\partial \bo{q}}$ is a three dimensional tensor, symmetric along the first and second dimension (so, transposing along these two dimensions doesn't change the products of the tensor with matrices or vectors). Multiplication by $\dot{\bo{q}}$ happens along the first and second dimensions, while the partial differentiation happens along the third dimension, therefore the result is not necessarily equals to $0.5 \dot{\bo{q}}^\top \dot{ \bo{H} }$. 
-		
-	\end{flushleft}
-\end{frame}
-
-
-\begin{frame}{Generalized inertia}
-	\framesubtitle{Part 2}
-	\begin{flushleft}
-		
-		Left-hand side of the Lagrange equations can be re-written as:
-		
-		\begin{equation}
-			\frac{d}{dt} \bigg( 
-			\bo{H} \dot{\bo{q}}
-			\bigg) - 
-			0.5 \dot{\bo{q}}^\top \frac{\partial \bo{H} }
-			{\partial \bo{q}} \dot{\bo{q}} = \tau
-		\end{equation}
-		
-		We can expand the derivative of a product:
-		
-		\begin{equation}
-			\label{Lagrange_expanded}
-			\bo{H} \ddot{\bo{q}} + \dot{\bo{H}} \dot{\bo{q}} - 
-			0.5 \dot{\bo{q}}^\top \frac{\partial \bo{H} }
-			{\partial \bo{q}} \dot{\bo{q}} = \tau
-		\end{equation}
-		
-		Expression $\dot{\bo{H}} \dot{\bo{q}} - 
-		0.5 \dot{\bo{q}}^\top \frac{\partial \bo{H} }
-		{\partial \bo{q}} \dot{\bo{q}}$ is often cast as a linear form. $\bo{C}\dot{\bo{q}}$
-		
-		The classic formula for calculating $\bo{C}\dot{\bo{q}}$ uses Christoffel symbols.
-		
-	\end{flushleft}
-\end{frame}
-
-
-\begin{frame}{Generalized inertia}
-	\framesubtitle{Part 3, Christoffel symbols}
-	\begin{flushleft}
-		
-		Christoffel symbols-based formula for the $\bo{C}\dot{\bo{q}}$ is:
-		
-		\begin{equation}
-			\bo{C}\dot{\bo{q}} = 
-			\begin{bmatrix}
-				\sum\limits_{j,k}^{n} \Gamma_{1,j,k} \dot{q}_j \dot{q}_k \\
-				... \\
-				\sum\limits_{j,k}^{n} \Gamma_{n,j,k} \dot{q}_j \dot{q}_k
-			\end{bmatrix}
-		\end{equation}
-		
-		where Christoffel symbols $\Gamma_{i,j,k}$ are given as:
-		
-		\begin{equation}
-			\Gamma_{i,j,k} = \frac{1}{2} 
-			\bigg( 
-			\frac{\partial H_{i,j} }{\partial q_k} + 
-			\frac{\partial H_{i,k} }{\partial q_j} - 
-			\frac{\partial H_{k,j} }{\partial q_i}
-			\bigg)
-		\end{equation}
-		
-		\tiny{My apologies for not providing a derivation}
-		
-	\end{flushleft}
-\end{frame}
-
-
-
-\begin{frame}{Generalized inertia}
-	\framesubtitle{Part 4, Christoffel symbols}
-	\begin{flushleft}
-		
-		Sometimes we need to find matrix $\bo{C}$ specifically, rather than linear form $\bo{C}\dot{\bo{q}}$. This can be achieved using Christoffel symbols as well.
-		
-		\begin{equation}
-			C_{i, j} = 
-			\sum\limits_{k}^{n} \Gamma_{i,j,k} \dot{q}_k
-		\end{equation}
-		
-	\end{flushleft}
-\end{frame}
-
-
-
-
-\begin{frame}{Generalized inertia}
-	\framesubtitle{Part 5, Alternative formulation}
-	\begin{flushleft}
-		
-		If you use auto-differentiation, you can consider directly using expression \eqref{Lagrange_expanded} to find $\bo{C}\dot{\bo{q}}$:
-		
-		\begin{equation}
-			\bo{C}\dot{\bo{q}} = 
-			\dot{\bo{H}} \dot{\bo{q}} - 
-			0.5 \frac{\partial  \dot{\bo{q}}^\top \bo{H} \dot{\bo{q}}}
-			{\partial \bo{q}} 
-		\end{equation}
-		
-		In Matlab code it looks like:
-		
-		\input{code1}
-		
-	\end{flushleft}
-\end{frame}
-
-
-
-\begin{frame}{Generalized inertia}
-	\framesubtitle{Part 6, Alternative formulation}
-	\begin{flushleft}
-		
-		Alternatively, you can use the following formula:
-		
-		\begin{equation}
-			\bo{C}\dot{\bo{q}} = 
-			\dot{\bo{H}} \dot{\bo{q}} - 
-			0.5 \frac{\partial \text{vec}( \bo{H} ) }
-			{\partial \bo{q}} (\dot{\bo{q}} \otimes \dot{\bo{q}}) 
-		\end{equation}
-		
-		where $\otimes$ is a Kronecker product, and $\text{vec}()$ is vectorization of matrix (representing all its elements as a vector. 
-		
-		\bigskip
-		
-		In Matlab code it looks like:
-		
-		\input{code2}
-		
-	\end{flushleft}
-\end{frame}
-
-
-
-
-\begin{frame}{Generalized forces}
-	\framesubtitle{Part 1, General case}
-	\begin{flushleft}
-		
-		You can express generalized forces of all kinds using discussed previously multiplication by the Jacobian:
-		
-\begin{equation}
-	\tau = \bigg( \frac{\partial \bo{r} }{\partial \bo{q}} \bigg) ^\top \bo{f}
-\end{equation}
 		%
-		where $\bo{f}$ is an external force, and $\bo{r}$ is the radius-vector giving position of that force.
+		where $\bo{K}_d > 0$ and $\bo{K}_p > 0$ are semidefinite matrices. Can we analyze its stability?
 		
 		\bigskip
 		
-		For a torque $\xi$ applied to a rigid body, the corresponding generalized force is:
-		
-		\begin{equation}
-			\tau = \bo{J}_w^\top \xi
-		\end{equation}
-		
-		where $\bo{J}_w$ is the angular velocity Jacobian of that body. Note that both $\bo{J}_w$ and $\xi$ need to be expressed in the same basis.
-		
+		We propose Lyapunov function
+		 
+		 \begin{equation}
+		 	V = \frac{1}{2} \dot{\bo{q}}\T  \dot{\bo{q}} + 
+		 	       \frac{1}{2} \bo{q}\T \bo{K}_p\bo{q}
+		 \end{equation}
 		
 	\end{flushleft}
 \end{frame}
 
 
 
-\begin{frame}{Generalized forces}
-	\framesubtitle{Part 2, Conservative forces}
+\begin{frame}{Basic second-order system}
 	\begin{flushleft}
 		
-		If the force is conservative, it is often easy to describe potential energy $U$ associated with it. Then you can find the relevant generalized forces as:
+		Derivative of the Lyapunov function is:
 		
 		\begin{equation}
-			\bo{g} = -\frac{\partial U }{\partial \bo{q}}
+			\dot V = \dot{\bo{q}}\T  \ddot{\bo{q}} + 
+			\bo{q}\T \bo{K}_p \dot{\bo{q}}
 		\end{equation}
 		
-		Typically this is useful for gravitational forces and elastic forces.
+		But we know that $\ddot{\bo{q}} = -\bo{K}_d \dot{\bo{q}} - \bo{K}_p\bo{q}$, so:
+		%
+		\begin{align}
+	\dot V = -\dot{\bo{q}}\T  (\bo{K}_d \dot{\bo{q}} + \bo{K}_p\bo{q}) + 
+	\bo{q}\T \bo{K}_p \dot{\bo{q}} 
+	\\
+	\dot V = -\dot{\bo{q}}\T\bo{K}_d \dot{\bo{q}} 
+		\end{align}		
+	
+	This means that the system is at least marginally stable: $\dot V \leq 0$, namely $\dot V = 0$ for $\dot{\bo{q}} = 0$ and $\forall \bo{q}$.
+		
+		\bigskip
+		
+		Now, we want to prove that the only trajectory in the fixed point ($\dot{\bo{q}} = 0$, $\ddot{\bo{q}} = 0$) is $\bo{q} = 0$.
 		
 	\end{flushleft}
 \end{frame}
 
 
-%
-%\begin{frame}{Reaction forces}
-%%	\framesubtitle{Part 3, Reaction forces}
-%	\begin{flushleft}
-%		
-%		The discussion of the reaction forces stays the same as for any other general case forces, we use Jacobians to transform them into a generalized form. 
-%		
-%		\bigskip
-%		
-%		We can define constraint Jacobian $\bo{F}$ as:
-%		
-%		\begin{equation}
-%			\bo{F} = \frac{\partial \bo{p}(\bo{q}) }{\partial \bo{q}}
-%		\end{equation}
-%		%
-%		where $\bo{p}(\bo{q})$ is the constraint which is enforced for the reaction force.
-%		Generalized reaction forces are found as:
-%		
-%		\begin{equation}
-%			\tau = \bo{F}^\top \lambda
-%		\end{equation}
-%		
-%	\end{flushleft}
-%\end{frame}
-%
-%
-%
-%
-%\begin{frame}{Reaction forces}
-%%	\framesubtitle{Part 4, Reaction forces}
-%	\begin{flushleft}
-%		
-%		Sometimes a constraint can be expressed not as an explicit function of the Cartesian coordinates, but as an implicit one; for example, it can be expressed as a function of generalized coordinates.
-%		
-%		\begin{exampleblock}{Example 1}
-%			\[
-%			\bo{g}(\bo{q}) = q_1 - q_3 + 2 = 0
-%			\]
-%		\end{exampleblock}
-%		
-%		\begin{exampleblock}{Example 2}
-%			\[
-%			\bo{g}(\bo{q}) = q^2_1 + q^2_2 - 1 = 0
-%			\]
-%		\end{exampleblock}
-%		
-%		But the generalized reaction forces for this case are still found the same way, as:
-%		
-%		\begin{equation}
-%			\tau = \bo{F}^\top \lambda
-%		\end{equation}
-%		
-%		
-%	\end{flushleft}
-%\end{frame}
 
 
-
-\begin{frame}{Manipulator equations}
+\begin{frame}{Basic second-order system}
 	\begin{flushleft}
 		
-		Finally we can write the form of manipulator equations:
+		Consider the fixed point $\dot{\bo{q}} = 0$, $\ddot{\bo{q}} = 0$:
 		
 		\begin{equation}
-			\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} = \tau
+			\ddot{\bo{q}} + \bo{K}_d \dot{\bo{q}} + \bo{K}_p\bo{q} = 0 
+			\ \ \ \rightarrow \ \ \ 
+			\bo{K}_p\bo{q} = 0
 		\end{equation}
 		
-		Another popular form specifically points out conservative forces $\bo{g}$:
+		Since $\bo{K}_p > 0$, it is full rank and has a trivial null space, so $\bo{q} = 0 $ is the only trajectory in the fixed point space. So, the system is asymptotically stable by LaSalle's invariance principle.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Gravity compensation}
+	\begin{flushleft}
+		
+		Now, we can consider manipulator equations:
 		
 		\begin{equation}
 			\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} + \bo{g} = \tau
 		\end{equation}
+	
+		We propose a Lyapunov function:
+		 
+\begin{equation}
+	V = \frac{1}{2} \dot{\bo{q}}\T  \bo{H} \dot{\bo{q}} + 
+	\frac{1}{2} \bo{q}\T \bo{K}_p\bo{q}
+\end{equation}		
 		
-		The most concise and useful for this class form is:
-		
-		\begin{equation}
-			\bo{H} \ddot{\bo{q}} + \bo{c} = \tau
-		\end{equation}
-		
-		where $\bo{c} = \bo{C} \dot{\bo{q}} + \bo{g}$.
+	\begin{align}
+	\dot V = \dot{\bo{q}}\T  \bo{H}  \ddot{\bo{q}} + 
+	\frac{1}{2} \dot{\bo{q}}\T  \dot{\bo{H}} \dot{\bo{q}} +
+	\dot{\bo{q}}\T \bo{K}_p \bo{q} 
+	\\
+	\dot V = \dot{\bo{q}}\T  (\tau - \bo{C} \dot{\bo{q}} + \bo{g} ) + 
+	\frac{1}{2} \dot{\bo{q}}\T  \dot{\bo{H}} \dot{\bo{q}} +
+	\dot{\bo{q}}\T \bo{K}_p \bo{q} 
+	\\
+	\dot V = \frac{1}{2} \dot{\bo{q}}\T  ( \dot{\bo{H}} - 2 \bo{C} ) \dot{\bo{q}} +
+	\dot{\bo{q}}\T  (\tau - \bo{g} ) + 
+	\dot{\bo{q}}\T \bo{K}_p \bo{q} 
+	\end{align}		
 		
 	\end{flushleft}
 \end{frame}
 
 
 
-
-\begin{frame}{Solving manipulator equations}
+\begin{frame}{Gravity compensation}
 	\begin{flushleft}
 		
-		Importantly, manipulator equations can always be re-written in an explicit form (where the highest-order derivative is isolated on the left-hand-side):
+		Looking at the expression: 
+		
+		$$\dot V = \frac{1}{2} \dot{\bo{q}}\T  ( \dot{\bo{H}} - 2 \bo{C} ) \dot{\bo{q}} +
+		\dot{\bo{q}}\T  (\tau - \bo{g} ) + 
+		\dot{\bo{q}}\T \bo{K}_p \bo{q} $$ 
+		%
+		we can observe that $ \dot{\bo{H}} - 2 \bo{C} $ is skew-symmetric, and therefore $\dot{\bo{q}}\T  ( \dot{\bo{H}} - 2 \bo{C} ) \dot{\bo{q}} = 0$
+		
+		We can propose the following $\tau$:
 		
 		\begin{equation}
-			 \ddot{\bo{q}} = \bo{H}^{-1} (\tau - \bo{C} \dot{\bo{q}} - \bo{g} )
-		\end{equation}
+			\tau = \bo{g}  - \bo{K}_d \dot{\bo{q}}  - \bo{K}_p \bo{q}
+		\end{equation}		
 	
-		This is possible because $\bo{H}$ is full-rank. This in turn is possible, because generalized coordinates are independent.
+		Then the Lyapunov function derivative takes form:
+		
+	\begin{align}
+	\dot V = 
+	-\dot{\bo{q}}\T  \bo{K}_d \dot{\bo{q}}
+	-\dot{\bo{q}}\T  \bo{K}_p \bo{q}
+	 + 
+	\dot{\bo{q}}\T \bo{K}_p \bo{q} 
+	\\
+	\dot V = 
+	-\dot{\bo{q}}\T  \bo{K}_d \dot{\bo{q}} \leq 0
+	\end{align}				
+					
 		
 	\end{flushleft}
 \end{frame}
 
 
-%
-%\begin{frame}{Manipulator equations}
-%	\framesubtitle{Part 2, reaction forces}
-%	\begin{flushleft}
-%		
-%		Manipulator equations with reaction forces have the form:
-%		
-%		\begin{equation}
-%			\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} = \tau + \bo{F}^\top \lambda
-%		\end{equation}
-%		
-%		The most concise and useful for this class form is:
-%		
-%		\begin{equation}
-%			\bo{H} \ddot{\bo{q}} + \bo{c} = \tau + \bo{F}^\top \lambda
-%		\end{equation}
-%		
-%		As usual, this is incomplete without the mention of the constraint:
-%		
-%		\begin{equation}
-%			\begin{cases}
-%				\bo{H} \ddot{\bo{q}} + \bo{c} = \tau + \bo{F}^\top \lambda \\
-%				\bo{g}(\bo{q}) = 0
-%			\end{cases}
-%		\end{equation}
-%		
-%	\end{flushleft}
-%\end{frame}
+
+
+\begin{frame}{Gravity compensation}
+	\begin{flushleft}
+		
+		So, $\dot V = 
+		-\dot{\bo{q}}\T  \bo{K}_d \dot{\bo{q}} \leq 0$. More precisely $\dot V = 0$ for $\dot{\bo{q}} = 0$ and $\forall \bo{q}$, giving us marginal stability.
+		
+		\bigskip
+		
+		Let us study the fixed points $\dot{\bo{q}} = 0$ and $\ddot{\bo{q}} = 0$ for the manipulator eq.:
+		
+		\begin{align}
+			\bo{g} = \bo{g}  - \bo{K}_p \bo{q} \\
+			\bo{K}_p \bo{q} = 0 \\
+			\bo{q} = 0
+		\end{align}				
+	
+		We get that the only trajectory in the fixed space is $\bo{q} = 0$. So, the system is asymptotically stable by LaSalle's invariance principle.	
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Gravity compensation}
+	\begin{flushleft}
+		
+		The control that we proposed:
+		
+		\begin{equation}
+			\tau = \bo{g}  - \bo{K}_d \dot{\bo{q}}  - \bo{K}_p \bo{q}
+		\end{equation}		
+	%
+	is gravity compensation and PD control. We have proven that it is  stable.
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Proportional control}
+	\begin{flushleft}
+		
+		If the system has linear dissipation force (viscous force) $\bo{F} \dot{\bo{q}}$:
+		
+		\begin{equation}
+			\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} + \bo{F} \dot{\bo{q}} + \bo{g} = \tau
+		\end{equation}
+		
+		...we can use proportional control without derivative component:
+		
+		\begin{equation}
+			\tau = \bo{g}  - \bo{K}_p \bo{q}
+		\end{equation}		
+	
+	Where the same Lyapunov function will obtain derivative:
+	
+	\begin{align}
+		\dot V = 
+		-\dot{\bo{q}}\T  \bo{F}_d \dot{\bo{q}} \leq 0
+	\end{align}	
+	
+		With the same conclusions as before. An example of system for which we can use it is industrial robot arms with gear box reducers.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Computed torque control}
+	\begin{flushleft}
+		
+		Let us introduce  \emph{desired position} $\bo{q}^*$ and \emph{position error}  $\bo{e}$:
+		
+		\begin{equation}
+			\bo{e} = \bo{q}^* - \bo{q}
+		\end{equation}
+	
+		If we are lucky, the \emph{error dynamics} is evolving in accord with the following equation: 
+		
+		\begin{equation}
+	\ddot{\bo{e}} + \bo{K}_d \dot{\bo{e}} + \bo{K}_p \bo{e} = 0
+		\end{equation}		
+	%
+	where $\bo{K}_d > 0$ and $\bo{K}_p > 0$. This system is asymptotically stable, meaning that $\bo{e} \rightarrow 0$ and $\bo{q} \rightarrow \bo{q}^*$.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Computed torque control}
+	\begin{flushleft}
+		
+		Let us find what  $\ddot{\bo{e}}$ is:
+		
+		\begin{align}
+			\ddot{\bo{e}} = \ddot{\bo{q}}^* - \ddot{\bo{q}} 
+			\\
+			\ddot{\bo{e}} = \ddot{\bo{q}}^* -  \bo{H}^{-1}(\tau - \bo{C} \dot{\bo{q}} - \bo{g})
+		\end{align}
+	
+		Then error dynamics is:
+		%
+		\begin{align}
+\ddot{\bo{q}}^* -  \bo{H}^{-1}(\tau - \bo{C} \dot{\bo{q}} - \bo{g})
+ + \bo{K}_d \dot{\bo{e}} + \bo{K}_p \bo{e} = 0
+ \\
+\bo{H}\ddot{\bo{q}}^* - (\tau - \bo{C} \dot{\bo{q}} - \bo{g})
++ \bo{H}(\bo{K}_d \dot{\bo{e}} + \bo{K}_p \bo{e}) = 0 
+\\
+\tau = \bo{H}\ddot{\bo{q}}^* + \bo{C} \dot{\bo{q}} + \bo{g} +
+\bo{H}(\bo{K}_d \dot{\bo{e}} + \bo{K}_p \bo{e})
+		\end{align}				
+	
+	So, we found a control law that makes error dynamics stable, meaning $\bo{q} \rightarrow \bo{q}^*$.
+		
+	\end{flushleft}
+\end{frame}
 
 
 
@@ -515,22 +321,8 @@
 	% \framesubtitle{Parameter estimation}
 	\begin{flushleft}
 		
-		You can read more at:
+		You can read more at \emph{ Siciliano, B., Sciavicco, L., Villani, L. and Oriolo, G., 2009. Robotics. Advanced textbooks in control and signal processing}, Chapter 8.5
 		
-		\begin{itemize}
-			\item \textcolor{blue}{\href{https://www.cds.caltech.edu/~murray/books/MLS/pdf/mls94-manipdyn_v1_2.pdf}{Chapter 4. Robot Dynamics and
-				Control}}
-			 - part 3.2, an interesting derivation.
-			\item \textcolor{blue}{\href{https://ethz.ch/content/dam/ethz/special-interest/mavt/robotics-n-intelligent-systems/rsl-dam/documents/RobotDynamics2017/RD_HS2017script.pdf}{Robot Dynamics Lecture Notes. Robotic Systems Lab, ETH Zurich HS 2017}}:
-			\begin{itemize}
-				\item 2.5 Angular Velocity
-				\item Chapter 3. Dynamics
-				\item 3.4.2 Kinetic Energy
-				\item 3.4.3 Potential Energy
-				\item 3.4.5 Additional Constraints (note some notational differences)
-				\item 3.5.2 Deriving Generalized Equations of Motion
-			\end{itemize}
-\end{itemize}
 
 \end{flushleft}
 \end{frame}
