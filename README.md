@@ -24,6 +24,7 @@ This repository contains regularly updated course materials. You can use lecture
 * Lecture 5 (Fundamental Subspaces, Null space, Column space) - https://youtu.be/k1_oDISymIo
 * Lecture 6 (Inverse kinematics) - https://youtu.be/l3pOnPsE2D8
 * Lecture 7 (Task Prioritization) - https://youtu.be/h8ApJaV90GY
+* Lecture 8 (Robot Dynamics) - https://youtu.be/9248I5E5mmw
 
 
 # Assignments
