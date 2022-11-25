@@ -203,6 +203,8 @@
 		Let us study the fixed points $\dot{\bo{q}} = 0$ and $\ddot{\bo{q}} = 0$ for the manipulator eq.:
 		
 		\begin{align}
+			\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} + \bo{g} = \bo{g}  - \bo{K}_d \dot{\bo{q}}  - \bo{K}_p \bo{q} 
+			\\
 			\bo{g} = \bo{g}  - \bo{K}_p \bo{q} \\
 			\bo{K}_p \bo{q} = 0 \\
 			\bo{q} = 0
@@ -313,6 +315,38 @@
 		
 	\end{flushleft}
 \end{frame}
+
+
+
+\begin{frame}{Computed torque control}
+	\begin{flushleft}
+		
+		Often, it does not make sense to try to compute $\bo{H}$ and $\bo{C} \dot{\bo{q}} + \bo{g}$ based on current position of the robot. Instead, we can compute it based on the desired trajectory:
+		
+		 \begin{align}
+		 	\bo{H}^* = \bo{H}(\bo{q}^*) \\
+		 	\bo{C}^* = \bo{C}(\dot{\bo{q}}^*, \bo{q}^*) \\
+		 	\bo{g}^* = \bo{g}(\bo{q}^*) 
+		 \end{align}
+		
+		We can define inverse dynamics $\tau^*$ as:
+		
+		\begin{align}
+			\tau^* = \bo{H}^*\ddot{\bo{q}}^* + \bo{C}^* \dot{\bo{q}}^* + \bo{g}^*
+		\end{align}
+		
+		Then, the control law can be re-written as:
+		%
+		\begin{align}
+			\tau = \tau^* +
+			\bo{H}^*(\bo{K}_d \dot{\bo{e}} + \bo{K}_p \bo{e})
+		\end{align}				
+		
+		But, this way we do not have any stability guarantee.
+		
+	\end{flushleft}
+\end{frame}
+
 
 
 
