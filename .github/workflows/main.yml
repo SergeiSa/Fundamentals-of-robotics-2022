@@ -72,6 +72,18 @@ jobs:
           root_file: main.tex
           working_directory: Slides/DynamicsManipulatorEq/
 
+      - name: Compile LaTeX document ControlPDLyapunov
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/ControlPDLyapunov/
+
+      - name: Compile LaTeX document ForceControl
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/ForceControl/
+
 
 
 
@@ -129,6 +141,19 @@ jobs:
           name: DynamicsManipulatorEq.pdf
           path: Slides/DynamicsManipulatorEq/main.pdf
 
+      - name: Save ControlPDLyapunov artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: ControlPDLyapunov.pdf
+          path: Slides/ControlPDLyapunov/main.pdf
+
+      - name: Save ForceControl artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: ForceControl.pdf
+          path: Slides/ForceControl/main.pdf
+
+
 
 
 
@@ -147,6 +172,8 @@ jobs:
           git add Slides/InverseKinematics/main.pdf
           git add Slides/KinematicsAndTasks/main.pdf
           git add Slides/DynamicsManipulatorEq/main.pdf
+          git add Slides/ControlPDLyapunov/main.pdf
+          git add Slides/ForceControl/main.pdf
 
 
 

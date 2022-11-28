@@ -1,0 +1,396 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+\newcommand{\dq} {\dot{\mathbf{q}}}
+
+
+\title{Compliance control, Force control}
+\subtitle{Fundamentals of Robotics, Lecture 10}
+\author{by Sergei Savin}
+\centering
+\date{\mydate}
+
+
+
+\begin{document}
+\maketitle
+
+
+
+
+
+\begin{frame}{Operation space}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Let us consider a task $\bo{r}_K = \bo{r}_K(\bo{q})$. We can differentiate it twice:
+		
+		\begin{align}
+			\dot{\bo{r}}_K = \bo{J}_K \dot{\bo{q}} \\
+			\ddot{\bo{r}}_K = \bo{J}_K \ddot{\bo{q}} + \dot{\bo{J}}_K \dot{\bo{q}} 
+	    \end{align}
+    
+    	But remember, we know what robot dynamics is:
+    	
+        \begin{equation}
+    		\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} + \bo{g} = \tau
+    	\end{equation}
+    	
+    	Expressing $ \ddot{\bo{q}}$ and substituting it to $\ddot{\bo{r}}_K$ we get:
+    	
+    	\begin{align}
+    		\ddot{\bo{r}}_K = \bo{J}_K \bo{H}^{-1} (\tau - \bo{C} \dot{\bo{q}} - \bo{g}) + \dot{\bo{J}}_K \dot{\bo{q}} 
+    	\end{align}
+    	
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Operation space}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		If $\bo{J}_K$ is full rank (which happens with some robot arms) we can rewrite the last equation further:
+		
+		\begin{align}
+			\ddot{\bo{r}}_K = \bo{J}_K \bo{H}^{-1} (\tau - \bo{C} \dot{\bo{q}} - \bo{g}) + \dot{\bo{J}}_K \dot{\bo{q}} 
+			\\
+			\bo{H}\bo{J}_K^{-1} \ddot{\bo{r}}_K =  (\tau - \bo{C} \dot{\bo{q}} - \bo{g}) + \bo{H}\bo{J}_K^{-1} \dot{\bo{J}}_K \dot{\bo{q}} 
+		\end{align}
+		
+		Then we can multiply both sides by $ \bo{J}_K^{-\top}$ and define $\bo{J}_K\T \bo{f}_K = \tau $ we get:
+		
+		\begin{align}
+	\bo{J}_K^{-\top}\bo{H}\bo{J}_K^{-1} \ddot{\bo{r}}_K
+	 =  
+	 \bo{J}_K^{-\top}\tau - \bo{J}_K^{-\top} \bo{C} \dot{\bo{q}} - \bo{J}_K^{-\top}\bo{g} + \bo{J}_K^{-\top} \bo{H}\bo{J}_K^{-1} \dot{\bo{J}}_K \dot{\bo{q}}
+	  \\
+	\bo{J}_K^{-\top}\bo{H}\bo{J}_K^{-1} \ddot{\bo{r}}_K
+=  
+\bo{f}_K - \bo{J}_K^{-\top} \bo{C} \dot{\bo{q}} - \bo{J}_K^{-\top}\bo{g} + \bo{J}_K^{-\top} \bo{H}\bo{J}_K^{-1} \dot{\bo{J}}_K \dot{\bo{q}}	  
+		\end{align}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Operation space dynamics}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		We define operation space inertial matrix $\bo{H}_K = \bo{J}_K^{-\top}\bo{H}\bo{J}_K^{-1}$:
+		
+		\begin{align}
+			\bo{H}_K \ddot{\bo{r}}_K
+			=  
+			\bo{f}_K - \bo{J}_K^{-\top} \bo{C} \dot{\bo{q}} - \bo{J}_K^{-\top}\bo{g} + \bo{H}_K \dot{\bo{J}}_K \dot{\bo{q}}	  
+			\\
+			\bo{H}_K \ddot{\bo{r}}_K + 
+			\bo{J}_K^{-\top} \bo{C} \dot{\bo{q}} - \bo{H}_K \dot{\bo{J}}_K \dot{\bo{q}}			 + 
+			\bo{J}_K^{-\top}\bo{g} 
+			=  
+			\bo{f}_K
+		\end{align}
+	
+		We additionally define:
+		
+				\begin{align}
+			\bo{J}_K^{-\top} \bo{C} \dot{\bo{q}} - \bo{H}_K \dot{\bo{J}}_K \dot{\bo{q}} =  \bo{C}_K \dot{\bo{r}}_K
+			\\
+			\bo{J}_K^{-\top}\bo{g} 
+			=  
+			\bo{g} _K
+		\end{align}
+		
+		 Which gets us to the operation-space equations:
+		
+		\begin{align}
+			\bo{H}_K \ddot{\bo{r}}_K + \bo{C}_K \dot{\bo{r}}_K +
+			\bo{g} _K
+			=  
+			\bo{f}_K
+		\end{align}		
+		
+	\end{flushleft}
+ \end{frame}
+
+
+
+
+
+\begin{frame}{Operation space dynamics}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Let us look at these equations closely:
+		
+		\begin{align}
+			\bo{H}_K \ddot{\bo{r}}_K + \bo{C}_K \dot{\bo{r}}_K +
+			\bo{g} _K
+			=  
+			\bo{f}_K
+		\end{align}		
+	
+		\begin{itemize}
+			\item They tell as how the task will evolve  under the influence of input forces $\bo{f}_K$
+			
+			\item Operation-space inertia matrix is full rank as long as $\bo{J}_K$ is full rank.
+			
+			\item As long as $\bo{J}_K$ is full rank, there is one-to-one correspondence between the operational space and joint space dynamics.
+		\end{itemize}
+	
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Operation space - external force}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Assume the original dynamics includes external force $ \bo{f}_e$ with jacobian $\bo{J}_e$:
+		
+		\begin{equation}
+			\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} + \bo{g} = \tau + \bo{J}_e\T \bo{f}_e
+		\end{equation}
+		
+		Then we can write the corresponding operational space dynamics:
+		
+		\begin{align}
+	\bo{H}_K \ddot{\bo{r}}_K + \bo{C}_K \dot{\bo{r}}_K +
+	\bo{g} _K
+	=  
+	\bo{f}_K + \bo{T}_e \bo{f}_e
+		\end{align}				
+	
+	where $\bo{T}_e = \bo{J}_K^{-\top}\bo{J}_e\T$.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Stiffness}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		If external force is elastic, proportional to the displacement in $ \bo{r}_K$, it can be re-written as:
+		
+		\begin{equation}
+			\bo{f}_e = \bo{K}_e (\bo{r}_K^* - \bo{r}_K) = -\bo{K}_e \bo{e}_K
+		\end{equation}
+		
+		where $\bo{e}_K = \bo{r}_K - \bo{r}_K^*$ - displacement in $ \bo{r}_K$ and $\bo{K}_e$ is a full-rank stiffness matrix.
+		
+		\bigskip
+		
+		If $\bo{r}_K^* = const$, then $\dot{\bo{e}}_K = \dot{\bo{r}}_K$ and $\ddot{\bo{e}}_K = \ddot{\bo{r}}_K$, and the dynamics assumes the form:
+		%
+		\begin{align}
+	\bo{H}_K \ddot{\bo{e}}_K + \bo{C}_K \dot{\bo{e}}_K +
+	\bo{g} _K
+	=  
+	\bo{f}_K -\bo{T}_e \bo{K}_e \bo{e}_K
+	\\
+	\bo{H}_K \ddot{\bo{e}}_K + \bo{C}_K \dot{\bo{e}}_K +
+	\bo{T}_e \bo{K}_e \bo{e}_K	+
+	\bo{g} _K
+	=  
+	\bo{f}_K
+		\end{align}			
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Stability in operational space}
+	\begin{flushleft}
+		
+	We propose Lyapunov function:
+		 
+\begin{equation}
+	V = \frac{1}{2} \dot{\bo{e}}_K\T  \bo{H}_K \dot{\bo{e}}_K + 
+	       \frac{1}{2} \bo{e}_K\T \bo{K}_p \bo{e}_K
+\end{equation}		
+		
+		Let us find its time-derivative:
+		
+\begin{align*}
+	\dot V = \dot{\bo{e}}_K\T  \bo{H}_K \ddot{\bo{e}}_K + 
+				  \frac{1}{2} \dot{\bo{e}}_K\T  \dot{\bo{H}}_K \dot{\bo{e}}_K+
+	               \dot{\bo{e}}_K\T \bo{K}_p \bo{e}_K
+	               \\
+	\dot V = \dot{\bo{e}}_K\T  \bo{f}_K - 
+	\dot{\bo{e}}_K\T (\bo{C}_K \dot{\bo{e}}_K +
+	\bo{T}_e \bo{K}_e \bo{e}_K	+
+	\bo{g} _K) + \\
+	+\frac{1}{2} \dot{\bo{e}}_K\T  \dot{\bo{H}}_K \dot{\bo{e}}_K +
+	\dot{\bo{e}}_K\T \bo{K}_p \bo{e}_K             
+	\\
+	\dot V = \dot{\bo{e}}_K\T  \bo{f}_K  - 
+	\dot{\bo{e}}_K\T \bo{T}_e \bo{K}_e \bo{e}_K	
+	- \dot{\bo{e}}_K\T \bo{g} _K + 
+	\dot{\bo{e}}_K\T \bo{K}_p \bo{e}_K
+\end{align*}				
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Gravity compensation in operational space}
+	\begin{flushleft}
+		
+		We can propose the following control law
+		
+		\begin{equation}
+			\bo{f}_K = \bo{g} _K - \bo{K}_p \bo{e}_K - \bo{K}_d \dot{\bo{e}}_K + \bo{T}_e \bo{K}_e \bo{e}_K
+		\end{equation}
+	%
+	where $\bo{K}_p$,  $\bo{K}_d$ are positive-definite matrices. Then, derivative of the Lyapunov function is:
+		
+	\begin{align*}
+	\dot V &= \dot{\bo{e}}_K\T  
+	(\bo{g} _K - \bo{K}_p \bo{e}_K + \bo{T}_e \bo{K}_e \bo{e}_K	- \bo{K}_d \dot{\bo{e}}_K)  - \\
+&-\dot{\bo{e}}_K\T \bo{T}_e \bo{K}_e \bo{e}_K	
+- \dot{\bo{e}}_K\T \bo{g} _K + 
+\dot{\bo{e}}_K\T \bo{K}_p \bo{e}_K
+\\
+\dot V &= -\dot{\bo{e}}_K\T \bo{K}_d \dot{\bo{e}}_K
+	\end{align*}		
+		
+		We can see that $\dot V \leq 0$.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Gravity compensation in operational space}
+	\begin{flushleft}
+		
+		We can consider the fixed points $\dot{\bo{e}}_K = 0$, $\ddot{\bo{e}}_K = 0$:
+		
+		\begin{align*}
+			\bo{H}_K \ddot{\bo{e}}_K + \bo{C}_K \dot{\bo{e}}_K +
+			\bo{T}_e \bo{K}_e \bo{e}_K	+
+			\bo{g} _K
+			&=  
+			\bo{g} _K - \bo{K}_p \bo{e}_K - \bo{K}_d \dot{\bo{e}}_K + \bo{T}_e \bo{K}_e \bo{e}_K
+			\\
+			\bo{T}_e \bo{K}_e \bo{e}_K	+
+			\bo{g} _K
+			&=  
+			\bo{g} _K - \bo{K}_p \bo{e}_K + \bo{T}_e \bo{K}_e \bo{e}_K
+			\\
+			0 &=  
+			- \bo{K}_p \bo{e}_K
+		\end{align*}		
+	
+	Since $\bo{K}_p$ is full rank, therefore $ \bo{e}_K = 0$. So, the system is asymptotically stable.
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Control law}
+	\begin{flushleft}
+		
+		\begin{align}
+			\bo{f}_K &= \bo{g} _K - \bo{K}_p \bo{e}_K - \bo{K}_d \dot{\bo{e}}_K + \bo{T}_e \bo{K}_e \bo{e}_K
+			\\
+			\tau &= \bo{J}_K\T \bo{g} _K - 
+			                   \bo{J}_K\T\bo{K}_p \bo{e}_K - 
+			                   \bo{J}_K\T\bo{K}_d \dot{\bo{e}}_K + 
+			\bo{J}_K\T\bo{T}_e \bo{K}_e \bo{e}_K 
+			\\
+			\tau &= \bo{J}_K\T \textcolor{mydarkblue}{\bo{g} _K} + 
+			(\bo{J}_K\T \textcolor{mygreen}{\bo{T}_e} \bo{K}_e  - \bo{J}_K\T\bo{K}_p) \bo{e}_K - 
+			\bo{J}_K\T\bo{K}_d \bo{J}_e \dot{\bo{q}}
+			\\
+			\tau &= \bo{J}_K\T \textcolor{mydarkblue}{\bo{J}_K^{-\top}\bo{g}} + 
+			(\bo{J}_K\T \textcolor{mygreen}{\bo{J}_K^{-\top}\bo{J}_e\T}  \bo{K}_e  - \bo{J}_K\T\bo{K}_p) \bo{e}_K - 
+			\bo{J}_K\T\bo{K}_d \bo{J}_e \dot{\bo{q}}
+			\\
+			\tau &= \bo{g} + 
+			(\bo{J}_e\T  \bo{K}_e  - \bo{J}_K\T\bo{K}_p) \bo{e}_K - 
+			\bo{J}_K\T\bo{K}_d \bo{J}_e \dot{\bo{q}}
+		\end{align}
+		
+		In a case when $\bo{J}_e = \bo{J}_K = \bo{J}$, we get:
+		
+		\begin{align}
+			\tau &= \bo{g} + 
+			\bo{J}\T  (\bo{K}_e  - \bo{K}_p) \bo{e}_K - 
+			\bo{J}\T\bo{K}_d \bo{J} \dot{\bo{q}}
+		\end{align}
+		
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Control law}
+	\begin{flushleft}
+		
+		Resulting control law:
+		
+		\begin{align}
+			\tau &= \bo{g} + 
+			\bo{J}\T  (\bo{K}_e  - \bo{K}_p) \bo{e}_K - 
+			\bo{J}\T\bo{K}_d \bo{J} \dot{\bo{q}}
+		\end{align}
+		%
+		results in a robot acting as if the contact interaction is governed by an elastic force with stiffness matrix $\bo{K} = \bo{K}_e  - \bo{K}_p$.
+		
+		\bigskip
+		
+		For a system with no natural elasticity $\bo{K}_e$ we can still achieve elastic-like behavior by choosing $\bo{K}_p$.
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Read more}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		You can read more at \emph{ Siciliano, B., Sciavicco, L., Villani, L. and Oriolo, G., 2009. Robotics. Advanced textbooks in control and signal processing}, Chapter 9.2
+		
+
+\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Thank you!}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\mygit}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\bigskip
+
+\centerline{\textcolor{black}{\qrcode[height=1.6in]{https://github.com/SergeiSa/Fundamentals-of-robotics-2022}}}
+
+\end{frame}
+
+\end{document}
