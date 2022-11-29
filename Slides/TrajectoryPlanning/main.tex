@@ -1,0 +1,235 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+\newcommand{\dq} {\dot{\mathbf{q}}}
+
+
+\title{Trajectory Optimization}
+\subtitle{Fundamentals of Robotics, Lecture 11}
+\author{by Sergei Savin}
+\centering
+\date{\mydate}
+
+
+
+\begin{document}
+\maketitle
+
+
+
+
+
+\begin{frame}{State-space}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		We can define state-space coordinates $\bo{x}$ for a mechanical system $\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} + \bo{g} = \tau$ as follows:
+		
+		\begin{equation}
+			\bo{x} = \begin{bmatrix}
+				\bo{q} \\
+				\dot{\bo{q}}
+			\end{bmatrix}
+		\end{equation}
+	
+	Defining $\bo{u} = \tau$,  $\bo{S}_q = [\bo{I} \ \ \bo{0}]$ and $\bo{S}_v = [\bo{0} \ \ \bo{I}]$ we get $\bo{q} = \bo{S}_q \bo{x}$ and $\dot{\bo{q}} = \bo{S}_v \bo{x}$. The state-space dynamics becomes:
+	
+	
+		\begin{equation}
+				\dot{\bo{x}} = 
+				\bo{f}(\bo{x}, \bo{u})
+				=
+		   \begin{bmatrix}
+				\bo{S}_v \bo{x} \\
+				\bo{H}^{-1} (\bo{u} - \bo{C} \bo{S}_v \bo{x} - \bo{g})
+			\end{bmatrix}
+		\end{equation}
+	
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Trajectory planning problem}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		We know how to control a nonlinear system $\dot{\bo{x}} = 
+		\bo{f}(\bo{x}, \bo{u})$ obtained from the manipulator equations, as long as we want point-to-point or trajectory following control, and the trajectory is provided. But how do we find a feasible trajectory?
+		
+		\bigskip
+		
+		Here are aspects of a typical trajectory problems:
+		
+		\begin{enumerate}
+			\item Drive the system to the desired state $\bo{x}^*(t_f)$ by the time $t_f$.
+			
+			\item Respect torque limits: $|| u_i || \leq u_{max}$.
+			
+			\item Respect kinematic constraints: $\dot{ q }_{min} \leq \dot{ q }_i \leq \dot{ q }_{max}$.
+			
+			\item Respect joint limits: $q_{i, min} \leq q_i \leq q_{i, max}$.
+			
+		\end{enumerate}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Trajectory planning as optimization}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		We can formulate the trajectory planning as an \emph{optimal control problem} (OCP):
+		
+		\begin{equation}
+			\begin{aligned}
+				& \underset{\bo{x}(t), \bo{u}(t)}{\text{minimize}}
+				& & \int\limits_{t_0}^{t_f} l \left( \bo{x}(t), \bo{u}(t) \right) dt + l_f(\bo{x}(t_f)), \\
+				& \text{subject to:}
+				& & \dot{\bo{x}} = 
+				\bo{f}(\bo{x}, \bo{u}) \\
+				& & & \bo{x}_{min} \leq \bo{x}(t) \leq \bo{x}_{max} \\
+				& & & \bo{u}_{min} \leq \bo{u}(t) \leq \bo{u}_{max}
+			\end{aligned}
+		\end{equation}
+	
+	This is an optimization problem with continuous variables and there are no solvers that can solve it (in a general case). So, our method is to replace the continuous time variables with a finite number of parameters. This is called \emph{transcription}.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Types of transcription}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		There are a number of popular ways to transcribe the trajectory. They are often divided into \emph{collocation} and \emph{shooting} methods.
+		
+		\bigskip
+		
+		Shooting methods transcribe $\bo{u}(t)$ via finite number of parameters (spline coefficients or values of $\bo{u}$ at particular time intervals), and then compute $\bo{x}(t)$ via integration.
+		
+		\bigskip
+		
+		Collocation methods transcribe both $\bo{u}(t)$ and $\bo{x}(t)$ via finite number of parameters (spline coefficients for $\bo{u}(t)$ and $\bo{x}(t)$), and use dynamics equations as constraints.		
+		
+	\end{flushleft}
+ \end{frame}
+
+
+
+
+\begin{frame}{Direct collocation}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Below is an example of a simple direct collocation, where the $\bo{x}(t)$ and $\bo{u}(t)$ are discretized at time nodes $t_1, \ ..., \ t_n$ as $(\bo{x}_1, \bo{u}_1), \ ..., \ (\bo{x}_n, \bo{u}_n)$.
+		%
+		\begin{equation*}
+			\begin{aligned}
+				& \underset{\substack{\bo{x}_1, \ ..., \ \bo{x}_n, \\ \bo{u}_1, \ ..., \ \bo{u}_{n-1}}}{\text{minimize}}
+				& & \sum\limits_{i=1}^{n-1} \left( \bo{x}_i\T \bo{Q}_i \bo{x}_i + \bo{u}_i\T \bo{R}_i \bo{u}_i \right) + (\bo{x}_n - \bo{x}_d)\T \bo{Q}_n (\bo{x}_n - \bo{x}_d), \\
+				& \text{subject to:}
+				& & \frac{\bo{x}_{i+1} - \bo{x}_i}{\Delta t_i} = 
+				\bo{f}(\bo{x}_i, \bo{u}_i) \\
+				& & & \bo{x}_{min} \leq \bo{x}_i \leq \bo{x}_{max} \\
+				& & & \bo{u}_{min} \leq \bo{u}_i \leq \bo{u}_{max}
+			\end{aligned}
+		\end{equation*}
+		
+		Approximating derivative as a difference does not strike us as highly accurate in this case. We can do a little better with the following constraint:
+		%
+		\begin{equation}
+		\bo{x}_{i+1} = \frac{\Delta t_i}{2} (\bo{f}(\bo{x}_i, \bo{u}_i) + \bo{f}(\bo{x}_{i+1}, \bo{u}_{i+1}))
+		\end{equation} 
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Direct collocation - linear discrete systems}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		In case of a linear discrete system $\bo{x}_{i+1} = \bo{A}_i \bo{x}_i + \bo{B}_i \bo{u}_i$, direct collocation becomes the obvious choice, equivalent to MPC. With quadratic cost it becomes a finite-time version of LQR:
+		%
+		\begin{equation*}
+			\begin{aligned}
+				& \underset{\substack{\bo{x}_1, \ ..., \ \bo{x}_n, \\ \bo{u}_1, \ ..., \ \bo{u}_{n-1}}}{\text{minimize}}
+				& & \sum\limits_{i=1}^{n-1} \left( \bo{x}_i\T \bo{Q}_i \bo{x}_i + \bo{u}_i\T \bo{R}_i \bo{u}_i \right) + (\bo{x}_n - \bo{x}_d)\T \bo{Q}_n (\bo{x}_n - \bo{x}_d), \\
+				& \text{subject to:}
+				& & \bo{x}_{i+1} = \bo{A}_i \bo{x}_i + \bo{B}_i \bo{u}_i \\
+				& & & \bo{x}_{min} \leq \bo{x}_i \leq \bo{x}_{max} \\
+				& & & \bo{u}_{min} \leq \bo{u}_i \leq \bo{u}_{max}
+			\end{aligned}
+		\end{equation*}
+		
+		Note, that if there were no inequality constraints, this problem would be solved analytically.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Single shooting}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Below is an example of a simple single shooting, where the $\bo{u}(t)$ is discretized at time nodes $t_1, \ ..., \ t_n$ as $\bo{u}_1, \ ..., \  \bo{u}_n$.
+		
+		\begin{equation}
+			\begin{aligned}
+				& \underset{\substack{\bo{u}_1, \ ..., \ \bo{u}_n}}{\text{minimize}}
+				& & \sum\limits_{i=1}^{n-1} ||\bo{u}_i|| + (\bo{x}(t_f) - \bo{x}_d)\T \bo{Q}_n (\bo{x}(t_f) - \bo{x}_d), \\
+				& \text{subject to:}
+				& & \bo{x} =  \int\limits_{t_0}^{t_f} \bo{f}(\bo{x}, \bo{u}) dt\\
+				& & & \bo{u}_{min} \leq \bo{u}_i \leq \bo{u}_{max}
+			\end{aligned}
+		\end{equation}
+		
+		Note that here it is possible to use sophisticated integration schemes, but also it is hard to impose state constraints (joint limits, joint velocity limits, obstacle avoidance, etc.).
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Read more}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		
+\textcolor{blue}{\href{http://www.matthewpeterkelly.com/research/MatthewKelly_IntroTrajectoryOptimization_SIAM_Review_2017.pdf}{Matthew Kelly Intro Trajectory Optimization.}}
+
+
+\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Thank you!}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\mygit}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\bigskip
+
+\centerline{\textcolor{black}{\qrcode[height=1.6in]{https://github.com/SergeiSa/Fundamentals-of-robotics-2022}}}
+
+\end{frame}
+
+\end{document}

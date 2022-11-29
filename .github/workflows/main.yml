@@ -84,6 +84,12 @@ jobs:
           root_file: main.tex
           working_directory: Slides/ForceControl/
 
+      - name: Compile LaTeX document InverseKinematics
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/InverseKinematics/
+
 
 
 
@@ -153,6 +159,12 @@ jobs:
           name: ForceControl.pdf
           path: Slides/ForceControl/main.pdf
 
+      - name: Save InverseKinematics artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: InverseKinematics.pdf
+          path: Slides/InverseKinematics/main.pdf
+
 
 
 
@@ -174,6 +186,7 @@ jobs:
           git add Slides/DynamicsManipulatorEq/main.pdf
           git add Slides/ControlPDLyapunov/main.pdf
           git add Slides/ForceControl/main.pdf
+          git add Slides/InverseKinematics/main.pdf
 
 
 
