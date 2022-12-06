@@ -12,6 +12,9 @@ This repository contains regularly updated course materials. You can use lecture
 * Lecture 6 (Inverse kinematics) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/InverseKinematics
 * Lecture 7 (Task prioritization) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/KinematicsAndTasks
 * Lecture 8 (Dynamical equations) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/DynamicsManipulatorEq
+* Lecture 9 (Lyapunov, Gravity compensation, Computed Torque Control) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/ControlPDLyapunov
+* Lecture 10 (Force Control) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/ForceControl
+* Lecture 11 (Trajectory Planning) - https://github.com/SergeiSa/Fundamentals-of-robotics-2022/tree/main/Slides/TrajectoryPlanning
 
 # Lecture videos (2022 offering)
 
@@ -25,6 +28,7 @@ This repository contains regularly updated course materials. You can use lecture
 * Lecture 6 (Inverse kinematics) - https://youtu.be/l3pOnPsE2D8
 * Lecture 7 (Task Prioritization) - https://youtu.be/h8ApJaV90GY
 * Lecture 8 (Robot Dynamics) - https://youtu.be/9248I5E5mmw
+* Lecture 9 (Lyapunov, Gravity compensation, Computed Torque Control) - https://youtu.be/jsYoKDou65E
 
 
 # Assignments
