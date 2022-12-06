@@ -1,0 +1,428 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+\newcommand{\dq} {\dot{\mathbf{q}}}
+
+
+\title{Robotics with Contact}
+\subtitle{Fundamentals of Robotics, Lecture 12}
+\author{by Sergei Savin}
+\centering
+\date{\mydate}
+
+
+
+\begin{document}
+\maketitle
+
+
+
+
+
+\begin{frame}{Constraints}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Assume the dynamics has to obey a certain equation, e.g.:
+		
+		\begin{equation}
+			\label{constraint}
+			\bo{g} (\bo{q}) = 0
+		\end{equation}
+		
+		This can happen, for example, if part of a robot is attached to the ground. Bolting the end-effector of a robot arm to the ground makes it into a parallel robot.
+		
+		\bigskip
+		
+		Equation \eqref{constraint} can be differentiated to find constraints on velocity or acceleration:
+		
+		\begin{equation}
+			\bo{F} \dot{\bo{q}} = 0
+		\end{equation}		
+		\begin{equation}
+			\bo{F}\ddot{\bo{q}} + \dot{\bo{F}} \dot{\bo{q}} = 0
+		\end{equation}		
+		%
+		where $\bo{F} = \frac{\partial \bo{g}}{\partial \bo{q}}$.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Constraints - dynamics}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Remember - without constraints the dynamics looks like $\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} + \bo{g} = \tau$. Presence of constraints adds reaction forces $\lambda$:
+		
+		\begin{equation}
+			\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} + \bo{g} = \tau + \bo{F}\T \lambda
+		\end{equation}
+		
+		Let us note that this equation is not solvable without the acceleration constraint equations. With constraints it has the following form:
+		
+		\begin{equation}
+			\begin{cases}
+				\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} + \bo{g} = \tau + \bo{F}\T \lambda \\
+				\bo{F}\ddot{\bo{q}} + \dot{\bo{F}} \dot{\bo{q}} = 0
+			\end{cases}
+		\end{equation}		
+		
+		As long as $\bo{F}$ has independent rows, it has only one solution.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Constraints - dynamics}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		We can re-write the equation in a block-matrix form:
+		
+		\begin{equation}
+			\begin{bmatrix}
+				\bo{H} & -\bo{F}\T \\
+			   -\bo{F} & 0
+			\end{bmatrix}
+\begin{bmatrix}
+	 \ddot{\bo{q}} \\
+	 \lambda
+\end{bmatrix}		
+=
+\begin{bmatrix}
+	\tau - \bo{C} \dot{\bo{q}}- \bo{g} \\
+	\dot{\bo{F}} \dot{\bo{q}}
+\end{bmatrix}		
+		\end{equation}		
+		
+		The block matrix on the left-hand side is invertible (as long as $\bo{F}$ has full row-rank).
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Constraints - dynamics}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Dynamics equations can be solved:
+		
+		\begin{align}
+			\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} + \bo{g} = \tau + \bo{F}\T \lambda
+			\\
+			\ddot{\bo{q}} =  \textcolor{mydarkblue}{\bo{H}^{-1}\bo{F}\T \lambda} + \textcolor{mydarkgreen}{\bo{H}^{-1} ( \tau - \bo{C} \dot{\bo{q}} - \bo{g} )}
+			\\
+			-\bo{F}\textcolor{mydarkblue}{\bo{H}^{-1}\bo{F}\T \lambda} -\bo{F} \textcolor{mydarkgreen}{\bo{H}^{-1} ( \tau - \bo{C} \dot{\bo{q}} - \bo{g} )} = \dot{\bo{F}} \dot{\bo{q}} 
+			\\
+			-\bo{F}\bo{H}^{-1}\bo{F}\T \lambda = \bo{F} \bo{H}^{-1} ( \tau - \bo{C} \dot{\bo{q}} - \bo{g}) + \dot{\bo{F}} \dot{\bo{q}}
+		\end{align}		
+		%
+		We define $\bo{f}_1 = \tau - \bo{C} \dot{\bo{q}} - \bo{g}$ and $\bo{f}_2 = \dot{\bo{F}} \dot{\bo{q}}$:
+		%
+		\begin{align}
+			-\bo{F}\bo{H}^{-1}\bo{F}\T \lambda = \bo{F} \bo{H}^{-1} \bo{f}_1 + \bo{f}_2
+			\\
+			\lambda = -\textcolor{mydarkblue}{(\bo{F}\bo{H}^{-1}\bo{F}\T )^{-1}(\bo{F} \bo{H}^{-1} \bo{f}_1 - \bo{f}_2)}
+			\\
+			\ddot{\bo{q}} =  -\bo{H}^{-1}\bo{F}\T  \textcolor{mydarkblue}{(\bo{F}\bo{H}^{-1}\bo{F}\T )^{-1}(\bo{F} \bo{H}^{-1} \bo{f}_1 - \bo{f}_2)} + \bo{H}^{-1} \bo{f}_1
+			\\
+			\ddot{\bo{q}} =  (\bo{I} - \bo{H}^{-1}\bo{F}\T (\bo{F}\bo{H}^{-1}\bo{F}\T )^{-1} \bo{F} \bo{H}^{-1}) \bo{f}_1 - \\
+			-
+			\bo{H}^{-1}\bo{F}\T (\bo{F}\bo{H}^{-1}\bo{F}\T )^{-1}\bo{F} \bo{H}^{-1} \bo{f}_2
+		\end{align}				
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Constraints - dynamics}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		So, we have:
+		
+		\begin{equation}
+			\begin{bmatrix}
+				\ddot{\bo{q}} \\
+				\lambda
+			\end{bmatrix}
+		=
+		     \begin{bmatrix}
+		     	\bo{I} - \bo{H}^{-1}\bo{F}\T \bo{M} \bo{F} \bo{H}^{-1} &
+		     	\bo{H}^{-1}\bo{F}\T \bo{M} \bo{F} \bo{H}^{-1} 
+		     	\\
+		     	\bo{M} \bo{F} \bo{H}^{-1} &
+		     	-\bo{M}
+		     \end{bmatrix}
+	     	\begin{bmatrix}
+	     \bo{f}_1 \\
+	     \bo{f}_2
+     		\end{bmatrix}
+		\end{equation}
+		
+		where $\bo{M} =  (\bo{F}\bo{H}^{-1}\bo{F}\T )^{-1}$.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Friction cone}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Note that reaction forces cannot assume arbitrary values. If $\bo{f}$ is a reaction force acting at a contact point, then constraints on possible values of reaction forces are given as:
+		
+		\begin{equation}
+			||\bo{T}\T\bo{f}|| \leq \mu \bo{n}\T \bo{f}
+		\end{equation}
+		%
+		where $\bo{T} \in \R^{3 \times 2}$ is a basis in a tangent plane on the supporting surface, $\bo{n}$ is a normal to the supporting surface and $\mu$ is a friction coefficient.
+		
+		\bigskip
+		
+		For a horizontal surface with friction coefficient $\mu = 0.5$ and $\bo{f} = [f_x \ f_y \ f_z]$ the equation loos like:
+		
+		\begin{equation}
+			\sqrt{f_x^2 + f_y^2} \leq 0.5 f_z
+		\end{equation}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Friction cone - approximation}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Alternatively, a linear approximation can be used:
+		
+		\begin{equation}
+			\bo{A}\bo{f} \leq \bo{b}
+		\end{equation}
+	
+	
+	For a horizontal surface with friction coefficient $\mu = 1$ approximation of the cone by a pyramid with 4 faces can look like:
+	
+	\begin{equation}
+		\begin{bmatrix}
+			\frac{\sqrt{2}}{2} & 0 & \frac{\sqrt{2}}{2} \\
+		   -\frac{\sqrt{2}}{2} & 0 & \frac{\sqrt{2}}{2} \\
+		     0 &  \frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2} \\
+		     0 & -\frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2}
+		\end{bmatrix}
+	\begin{bmatrix}
+		f_x \\ f_y \\ f_z
+	\end{bmatrix}
+\leq
+	\begin{bmatrix}
+	0 \\ 0 \\ 0 \\ 0
+	\end{bmatrix}
+	\end{equation}		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Contact - unilateral constraints}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Constraints simulating physical contact can be written as inequalities:
+		
+		\begin{equation}
+			\bo{g} (\bo{q}) \geq 0
+		\end{equation}
+	
+	    When $\bo{g} (\bo{q}) > 0$, the reaction force $\lambda = 0$, and conversely - if $\lambda > 0$, then $\bo{g} (\bo{q}) = 0$. This can be described via complimentary constraint:
+	    
+		\begin{equation}
+			\begin{cases}
+				\bo{g} (\bo{q})\T \lambda = 0 \\
+				\bo{g} (\bo{q}) \geq 0 \\
+				\lambda \geq 0
+			\end{cases}
+		\end{equation}	    
+		
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Reactive control}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Given nominal acceleration $\ddot{\bo{q}}^*$ and nominal reaction forces $\lambda^*$, we can formulate reactive control
+		
+		
+		\begin{align}
+			\underset{\ddot{\bo{q}}, \ \lambda}{\text{minimize}} \ \ &
+			||\ddot{\bo{q}}||_{\bo{Q}_1} + ||\lambda||_{\bo{Q}_2} \\
+			\text{subject to:}  \ \ & 
+			\bo{H} (\ddot{\bo{q}}^* + \ddot{\bo{q}}) + \bo{C} \dot{\bo{q}} + \bo{g} = \tau + \bo{F}\T (\lambda^* + \lambda) \\
+			& \bo{F}(\ddot{\bo{q}}^* + \ddot{\bo{q}}) + \dot{\bo{F}} \dot{\bo{q}} = 0 
+		\end{align}		
+		%
+		where $||\cdot||_{\bo{Q}_i}$ is a weighted norm with weight matrix $\bo{Q}_i$.
+		
+		This control law does not guarantee stability and requires solving a quadratic problem on each iteration.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{Inverse dynamics}
+	\framesubtitle{QR decomposition}
+	\begin{flushleft}
+		
+		For a constrained mechanical system we can solve inverse dynamics without the need for linearization. Consider the following dynamics:
+		
+		\begin{equation}
+			\mathbf{H}\ddot{\mathbf{q}} + \mathbf{C}\dot{\mathbf{q}} + \mathbf{g} = \mathbf{B}\mathbf{u} + \mathbf{F}^\top \lambda
+		\end{equation}
+		
+		We can represent constraint Jacobian $\mathbf{F}^\top$ as its QR decomposition: $\mathbf{F}^\top = \mathbf{Q} \begin{bmatrix} \mathbf{R} \\ \mathbf{0}  \end{bmatrix}$, where $\mathbf{Q}^\top \mathbf{Q} = \mathbf{Q} \mathbf{Q}^\top = \mathbf{I}$ and $\mathbf{R}$ is convertible.
+		
+		\begin{equation}
+			\mathbf{H}\ddot{\mathbf{q}} + \mathbf{C}\dot{\mathbf{q}} + \mathbf{g} = \mathbf{B}\mathbf{u} + \mathbf{Q} \begin{bmatrix} \mathbf{R} \\ \mathbf{0}  \end{bmatrix} \lambda
+		\end{equation}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Inverse dynamics}
+	\framesubtitle{QR decomposition}
+	\begin{flushleft}
+		
+		Let us multiply the equation by $\mathbf{Q}^\top$:
+		
+		\begin{equation}
+			\mathbf{Q}^\top (\mathbf{H}\ddot{\mathbf{q}} + \mathbf{C}\dot{\mathbf{q}} + \mathbf{g}) = \mathbf{Q}^\top\mathbf{B}\mathbf{u} + \begin{bmatrix} \mathbf{R} \\ \mathbf{0}  \end{bmatrix} \lambda
+		\end{equation}
+		
+		Introducing switching variables (to divide upper and lower part of the equations) $\mathbf{S}_1 = \begin{bmatrix} \mathbf{I} & \mathbf{0}  \end{bmatrix}$ and $\mathbf{S}_2 = \begin{bmatrix} \mathbf{0} & \mathbf{I}  \end{bmatrix}$ and multiplying equations by one and the other we get two systems:
+		
+		\begin{equation}
+			\begin{cases}
+				\mathbf{S}_1 \mathbf{Q}^\top (\mathbf{H}\ddot{\mathbf{q}} + \mathbf{C}\dot{\mathbf{q}} + \mathbf{g}) = \mathbf{S}_1\mathbf{Q}^\top\mathbf{B}\mathbf{u} + \mathbf{R} \lambda \\
+				\mathbf{S}_2 \mathbf{Q}^\top (\mathbf{H}\ddot{\mathbf{q}} + \mathbf{C}\dot{\mathbf{q}} + \mathbf{g}) = \mathbf{S}_2\mathbf{Q}^\top\mathbf{B}\mathbf{u}
+			\end{cases}
+		\end{equation}
+		
+		The main advantage we achieved is that now we can calculate both $\mathbf{u}$ and $\lambda$
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Inverse dynamics}
+	\framesubtitle{QR decomposition}
+	\begin{flushleft}
+		
+		Resulting expression for $\mathbf{u}$ is:
+		
+		\begin{equation}
+			\mathbf{u} = 
+			(\mathbf{S}_2\mathbf{Q}^\top\mathbf{B})^+ \mathbf{S}_2 \mathbf{Q}^\top (\mathbf{H}\ddot{\mathbf{q}} + \mathbf{C}\dot{\mathbf{q}} + \mathbf{g})
+		\end{equation}
+		
+		Expression for $\lambda$ is:
+		
+		\begin{equation}
+			\lambda = \mathbf{R}^{-1} \mathbf{S}_1 \mathbf{Q}^\top (\mathbf{H}\ddot{\mathbf{q}} + \mathbf{C}\dot{\mathbf{q}} + \mathbf{g} - \mathbf{B}\mathbf{u})
+		\end{equation}
+		
+		We can notice a pseudo-inverse, implying that the no-residual solution does not have to exist.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Read more}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		
+		\begin{itemize}
+			\item Righetti, L., Buchli, J., Mistry, M. and Schaal, S., 2011, May. Inverse dynamics control of floating-base robots with external constraints: A unified view. In 2011 IEEE international conference on robotics and automation (pp. 1085-1090). IEEE.
+			
+			\item Mistry, M., Buchli, J. and Schaal, S., 2010, May. Inverse dynamics control of floating base systems using orthogonal decomposition. In 2010 IEEE international conference on robotics and automation (pp. 3406-3412). IEEE.
+			
+			\item Righetti, L., Buchli, J., Mistry, M., Kalakrishnan, M. and Schaal, S., 2013. Optimal distribution of contact forces with inverse-dynamics control. The International Journal of Robotics Research, 32(3), pp.280-298.
+			
+			\item Nakanishi, J., Mistry, M. and Schaal, S., 2007, April. Inverse dynamics control with floating base and constraints. In Proceedings 2007 IEEE International Conference on Robotics and Automation (pp. 1942-1947). IEEE.
+		\end{itemize}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Thank you!}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\mygit}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\bigskip
+
+\centerline{\textcolor{black}{\qrcode[height=1.6in]{https://github.com/SergeiSa/Fundamentals-of-robotics-2022}}}
+
+\end{frame}
+
+
+
+\begin{frame}{Appendix A}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Prove that $\bo{F}\bo{H}^{-1}\bo{F}\T$ is full rank if $\bo{F}$ is full row-rank and $\bo{H} > 0$ - positive-definite.
+		
+		\bigskip
+		
+		We can prove that $\bo{F}\bo{H}^{-1}\bo{F}\T$ is positive-definite:
+		
+		\begin{equation}
+			J = \bo{x}\T\bo{F}\bo{H}^{-1}\bo{F}\T\bo{x}
+		\end{equation}
+		
+		Defining $\bo{y} = \bo{F}\T\bo{x}$. Since $\bo{F}$ is full row-rank, then $|| \bo{x} || \neq 0$ implies $|| \bo{y} || \neq 0$ because $\bo{F}\T$ has trivial null space. We get: $J = \bo{y}\T\bo{H}^{-1}\bo{y}$ which is positive for any non-zero $\bo{y}$ (because $\bo{H}$ is positive-definite), meaning $J  > 0$ for any non-zero $\bo{x}$. Since $\bo{F}\bo{H}^{-1}\bo{F}\T > 0$, it implies full-rank.
+		
+		\bigskip
+		
+		This is called \emph{congruent transformation}, which leaves positive-definiteness in-tact. 
+		
+	\end{flushleft}
+\end{frame}
+
+\end{document}
