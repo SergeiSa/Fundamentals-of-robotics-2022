@@ -84,12 +84,23 @@ jobs:
           root_file: main.tex
           working_directory: Slides/ForceControl/
 
-      - name: Compile LaTeX document InverseKinematics
+      - name: Compile LaTeX document TrajectoryPlanning
         uses: xu-cheng/latex-action@master
         with:
           root_file: main.tex
-          working_directory: Slides/InverseKinematics/
+          working_directory: Slides/TrajectoryPlanning/
 
+      - name: Compile LaTeX document Contact
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/Contact/
+
+      - name: Compile LaTeX document DynamicWeighedTaskPrioritization
+        uses: xu-cheng/latex-action@master
+        with:
+          root_file: main.tex
+          working_directory: Slides/DynamicWeighedTaskPrioritization/
 
 
 
@@ -159,11 +170,23 @@ jobs:
           name: ForceControl.pdf
           path: Slides/ForceControl/main.pdf
 
-      - name: Save InverseKinematics artifact
+      - name: Save TrajectoryPlanning artifact
         uses: actions/upload-artifact@v1
         with:
-          name: InverseKinematics.pdf
-          path: Slides/InverseKinematics/main.pdf
+          name: TrajectoryPlanning.pdf
+          path: Slides/TrajectoryPlanning/main.pdf
+
+      - name: Save Contact artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: Contact.pdf
+          path: Slides/Contact/main.pdf
+
+      - name: Save DynamicWeighedTaskPrioritization artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: DynamicWeighedTaskPrioritization.pdf
+          path: Slides/DynamicWeighedTaskPrioritization/main.pdf
 
 
 
@@ -186,7 +209,9 @@ jobs:
           git add Slides/DynamicsManipulatorEq/main.pdf
           git add Slides/ControlPDLyapunov/main.pdf
           git add Slides/ForceControl/main.pdf
-          git add Slides/InverseKinematics/main.pdf
+          git add Slides/TrajectoryPlanning/main.pdf
+          git add Slides/Contact/main.pdf
+          git add Slides/DynamicWeighedTaskPrioritization/main.pdf
 
 
 
