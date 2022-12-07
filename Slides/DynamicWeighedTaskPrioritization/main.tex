@@ -1,0 +1,415 @@
+\documentclass{beamer}
+
+\input{settings.tex}
+
+\newcommand{\iH} {\mathbf{H}^{-1}}
+\newcommand{\JH} {\bo{J}^\#_\bo{H}}
+
+
+\title{Dynamically-consistent pseudoinverse and task prioritization}
+\subtitle{Fundamentals of Robotics, Lecture 13}
+\author{by Sergei Savin}
+\centering
+\date{\mydate}
+
+
+
+\begin{document}
+\maketitle
+
+
+
+
+
+\begin{frame}{Tasks}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		A task is an equation that we wish robot trajectory to abide to. For example, let us consider a task $\bo{r}_t(t, \bo{q})$:
+		
+		\begin{equation}
+			\bo{r}_t(t, \bo{q}) = \bo{r}_e(\bo{q}) - \bo{r}^*_e(t) = 0
+		\end{equation} 
+	%
+	where $\bo{r}_e(\bo{q})$ is the position of the end effector subject to generalized coordinates, and $\bo{r}^*_e(t)$ is the desired position of the end effector.
+	
+		
+	\end{flushleft}
+\end{frame}
+
+
+\begin{frame}{Tasks}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Tasks are very similar to constraints. A task of the form $\bo{r}_t(\bo{q}) = \bo{r}^*_t(t)$ can be differentiated twice:
+		
+		\begin{align}
+			\bo{J} \dot{\bo{q}} = \dot{\bo{r}}^*_t \\
+			\bo{J}\ddot{\bo{q}} + \dot{\bo{J}} \dot{\bo{q}} = \ddot{\bo{r}}^*_t
+		\end{align}
+		
+		However, there are no naturally occurring forces that implement the tasks (like reaction forces did for constraints). It is the control implemented by us that acts as a reaction force pushing the system to follow the task.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Tasks and dynamics}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		How would the robot behave if a task is obeyed? On the most basic level, it would look like this:
+		
+		\begin{equation}
+			\begin{cases}
+				\bo{H} \ddot{\bo{q}} + \bo{C} \dot{\bo{q}} + \bo{g} = \tau \\
+				\bo{J}\ddot{\bo{q}} + \dot{\bo{J}} \dot{\bo{q}} = \ddot{\bo{r}}^*_t
+			\end{cases}
+		\end{equation}		
+		
+		Assuming that $\tau = \tau^* + \bo{J}\T \lambda$, we can rewrite it as:
+		
+		\begin{equation}
+	\begin{cases}
+		\bo{H} \ddot{\bo{q}}  = \tau^* + \bo{J}\T \lambda - (\bo{C} \dot{\bo{q}} + \bo{g}) \\
+		\bo{J}\ddot{\bo{q}} = \ddot{\bo{r}}^*_t - \dot{\bo{J}} \dot{\bo{q}}
+	\end{cases}
+		\end{equation}				
+		
+		Finally, we define $\tau^* = \bo{C} \dot{\bo{q}} + \bo{g}$ and $\bo{y} = \ddot{\bo{r}}^*_t - \dot{\bo{J}} \dot{\bo{q}}$, giving us:
+		
+		\begin{equation}
+	\begin{cases}
+		\bo{H} \ddot{\bo{q}}  =  \bo{J}\T \lambda \\
+		\bo{J}\ddot{\bo{q}}    = \bo{y}
+	\end{cases}
+		\end{equation}		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Solving for a single task}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		The equation $\begin{cases}
+			\bo{H} \ddot{\bo{q}}  =  \bo{J}\T \lambda \\
+			\bo{J}\ddot{\bo{q}}    = \bo{y}
+		\end{cases}$ can be solved:
+		
+		\begin{align}
+			\ddot{\bo{q}}  &=  \bo{H}^{-1}\bo{J}\T \lambda  
+			\\
+			\bo{J}\bo{H}^{-1}\bo{J}\T \lambda    &= \bo{y} 
+			\\
+			 \lambda    &= (\bo{J}\bo{H}^{-1}\bo{J}\T)^{-1}\bo{y} 
+			 \\
+			 \ddot{\bo{q}}  &=  \bo{H}^{-1}\bo{J}\T (\bo{J}\bo{H}^{-1}\bo{J}\T)^{-1}\bo{y} 
+			 \\
+			 \ddot{\bo{q}}  &=  \bo{H}^{-1}\bo{J}\T (\bo{J}\bo{H}^{-1}\bo{J}\T)^{-1}
+			 (\ddot{\bo{r}}^*_t - \dot{\bo{J}} \dot{\bo{q}})
+		\end{align}		
+		
+		So, the control law is:
+		
+		\begin{align}
+			\ddot{\bo{q}} &= \bo{J}^\#_\bo{H}  \bo{y} \\
+			\bo{J}^\#_\bo{H} &= \bo{H}^{-1}\bo{J}\T (\bo{J}\bo{H}^{-1}\bo{J}\T)^{-1}
+		\end{align}
+	%
+	where $\bo{J}^\#_\bo{H}$ is a \emph{dynamically-consistent pseudoinverse}.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Properties of the dynamic pseudoinverse}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Transpose of the weighted inverse has form:
+		
+		\begin{align}
+			(\JH)\T = (\bo{J} \iH \bo{J}\T)^{-1} \bo{J} \iH
+		\end{align}
+		
+		Consider matrix $\bo{C}$ acting a little like column space projector:
+		%
+		\begin{align}
+			\bo{C} = \bo{J} \JH = \bo{J} \iH \bo{J}\T (\bo{J} \iH \bo{J}\T)^{-1}  = \bo{I}
+		\end{align}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Properties of the dynamic pseudoinverse}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Consider matrix $\bo{N}$ acting a little like null space projector:
+		%
+		\begin{align}
+			\bo{N} = \bo{I} - \JH \bo{J} 
+			= \bo{I} - \iH \bo{J}\T (\bo{J} \iH \bo{J}\T)^{-1} \bo{J}
+		\end{align}
+		
+		Let us prove that $\bo{N}\JH = 0$.
+		%
+		\begin{align}
+			e &= (\bo{I} - \JH \bo{J}) \JH 
+			= \JH - \JH \bo{J}\JH
+		\end{align}
+		
+		Since $\bo{J} \JH = \bo{I}$, we get $e = \JH - \JH = 0$.
+		
+		\bigskip
+		
+		Let us prove that $\bo{J} \bo{N} = 0$.
+		%
+		\begin{align}
+			e = \bo{J} \bo{N}
+			= \bo{J} (\bo{I} - \JH \bo{J}) =\\
+			 = \bo{J} - \bo{J} \JH \bo{J} 
+			= \bo{J} - \bo{J} = 0
+		\end{align}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Two tasks}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Consider a situation when we have two tasks. Assuming we can accommodate both, it would be great to solve for them sequentially.
+		
+		We remember that the solution to the following system is:
+		
+		\begin{equation}
+			\begin{cases}
+				\bo{H} \bo{x} = \bo{J}\T \lambda \\
+				\bo{J} \bo{x} = \bo{y}
+			\end{cases}
+		\end{equation}
+		%
+		is $\bo{x} = \JH \bo{y}$.  Now we fix $\bo{x}$ and $\lambda = (\bo{J} \iH \bo{J}\T)^{-1} \bo{y}$ and introduce a new system:
+		
+		\begin{equation}
+			\begin{cases}
+				\bo{H} (\bo{x} + \chi) = \bo{J}\T \lambda + (\bo{G}\bo{N})\T \beta\\
+				\bo{G}\bo{N} (\bo{x} + \chi) = \bo{z} \\
+				\bo{J} (\bo{x} + \chi) = \bo{y}
+			\end{cases}
+		\end{equation}
+		%
+		where $\bo{N} = \bo{I} - \textcolor{mydarkblue}{\JH} \bo{J} = \bo{I} - \textcolor{mydarkblue}{\iH \bo{J}\T (\bo{J} \iH \bo{J}\T)^{-1} }\bo{J}$. 		Let us find $\chi$. 
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Two tasks}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Let us first study $\bo{G}\bo{N}\bo{x}$:
+		%
+		\begin{align}
+			e = \bo{G}\bo{N}\bo{x} 
+			 = \bo{G} \textcolor{red}{\bo{N}\JH} \bo{y}=0
+		\end{align}
+		
+		We found that $\bo{G}\bo{N}\bo{x} = 0$. Hence we can simplify:
+		%
+		\begin{equation}
+			\begin{cases}
+				\bo{H} (\bo{x} + \chi) = \bo{J}\T \lambda + (\bo{G}\bo{N})\T \beta\\
+				\bo{G}\bo{N} \chi = \bo{z} \\
+				\bo{J} (\bo{x} + \chi) = \bo{y}
+			\end{cases}
+		\end{equation}
+		
+		Additionally, we observe that $\bo{H} \bo{x} = \bo{J}\T \lambda$ so we simplify:
+		%
+		\begin{equation}
+			\begin{cases}
+				\bo{H} \chi = (\bo{G}\bo{N})\T \beta\\
+				\bo{G}\bo{N} \chi = \bo{z} \\
+				\bo{J} \chi = 0
+			\end{cases}
+		\end{equation}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Two tasks}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		So, we have:
+		
+		\begin{equation}
+			\begin{cases}
+				\bo{H} \chi = (\bo{G}\bo{N})\T \beta\\
+				\bo{G}\bo{N} \chi = \bo{z} \\
+				\bo{J} \chi = 0
+			\end{cases}
+		\end{equation}
+		
+		We solve for $\chi$:
+		
+		\begin{align}
+			\chi = \iH (\bo{G}\bo{N})\T \beta \\
+			\bo{G}\bo{N} \iH (\bo{G}\bo{N})\T \beta = \bo{z} \\
+			\beta = (\bo{G}\bo{N} \iH (\bo{G}\bo{N})\T)^{-1}\bo{z} \\
+			\chi = \iH ( \textcolor{mygreen}{\bo{G}\bo{N}} )\T (\textcolor{mygreen}{\bo{G}\bo{N}} \iH (\textcolor{mygreen}{\bo{G}\bo{N}})\T)^{-1}\bo{z} \\
+			\chi = (\bo{G}\bo{N})_\bo{H}^\# \bo{z}
+		\end{align}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Two tasks}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		Thus, we get a rather straight-forward way to solve for multiple tasks:
+		
+		\begin{itemize}
+			\item first task: $\bo{x} = \bo{J}^\#_\bo{H}  \bo{y}$
+			\item second task: $\chi = (\bo{G}\bo{N})_\bo{H}^\# \bo{z}$
+			\item solution: $\ddot{\bo{q}} = \bo{x} + \chi$
+		\end{itemize}
+		
+		\bigskip
+		
+		So, adding a new task, we simply multiply the jacobian by the null space "projector" and use the same dynamically consistent pseudoinverse. The resulting generalized acceleration is sum of the two components we found independently.
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Prove consistently}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		We can prove that the solution for the second task we found does not violate the original solution. I.e.,	does it honor the last constraint $\bo{J} \chi = 0$?
+		
+		\begin{align}
+			e &= \bo{J}(\bo{G}\bo{N})_\bo{H}^\# \bo{z} \\
+			e &= \bo{J}\iH (\bo{G}\bo{N})\T (\bo{G}\bo{N} \iH (\bo{G}\bo{N})\T)^{-1} \bo{z}\\
+			e &= \textcolor{red}{\bo{J}\iH \bo{N}\T}  \bo{G}\T (\bo{G}\bo{N} \iH \bo{N}\T \bo{G}\T)^{-1} \bo{z} \\
+			e &= 0
+		\end{align}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Prove consistently}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		
+		Let us prove that $\bo{J}\iH \bo{N}\T = 0$.
+		%
+		\begin{align}
+			e &= \bo{J} \iH \bo{N}\T \\
+			e &= \bo{J} \iH (\bo{I} - \JH \bo{J})\T  \\
+			e &= \bo{J} \iH (\bo{I} - \bo{J}\T (\JH)\T )  \\
+			e &= \bo{J} \iH - \bo{J} \iH \bo{J}\T (\JH)\T   \\
+			e &= \bo{J} \iH - \bo{J} \iH \bo{J}\T (\bo{J} \iH \bo{J}\T)^{-1} \bo{J} \iH 
+			\\
+			e &= (\bo{I} - \bo{J} \iH \bo{J}\T (\bo{J} \iH \bo{J}\T)^{-1}) \bo{J} \iH 
+			\\
+			e &= (\bo{I} - \bo{I}) \bo{J} \iH 
+			\\
+			e &= 0 
+		\end{align}
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{The process}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		We can put it this way. Sequential weighted inverse allows us to simplify:
+		
+		$$
+		\begin{cases}
+			\bo{H} (\bo{x} + \chi) = \bo{J}\T \lambda + (\bo{G}\bo{N})\T \beta\\
+			\bo{G}\bo{N} (\bo{x} + \chi) = \bo{z} \\
+			\bo{J} (\bo{x} + \chi) = \bo{y}
+		\end{cases}
+		\longrightarrow
+		\begin{cases}
+			\bo{H} \chi = (\bo{G}\bo{N})\T \beta\\
+			\bo{G}\bo{N} \chi = \bo{z}
+		\end{cases}
+		$$
+		
+		And this was possible because we used Jacobian matrix multiplied by generalized null space projector on the right: $\bo{G}\bo{N}$.
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+
+\begin{frame}{Read more}
+	% \framesubtitle{Parameter estimation}
+	\begin{flushleft}
+		
+		
+		\begin{itemize}
+			\item Kim, D., Di Carlo, J., Katz, B., Bledt, G. and Kim, S., 2019. Highly dynamic quadruped locomotion via whole-body impulse control and model predictive control. arXiv preprint arXiv:1909.06586.
+		\end{itemize}
+		
+		
+	\end{flushleft}
+\end{frame}
+
+
+
+\begin{frame}{Thank you!}
+\centerline{Lecture slides are available via Moodle.}
+\bigskip
+\centerline{You can help improve these slides at:}
+\centerline{\mygit}
+\bigskip
+\centerline{Check Moodle for additional links, videos, textbook suggestions.}
+\bigskip
+
+\centerline{\textcolor{black}{\qrcode[height=1.6in]{https://github.com/SergeiSa/Fundamentals-of-robotics-2022}}}
+
+\end{frame}
+
+
+
+\end{document}
